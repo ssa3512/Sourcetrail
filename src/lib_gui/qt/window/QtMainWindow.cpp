@@ -29,6 +29,7 @@
 #include "FileSystem.h"
 #include "logging.h"
 #include "MessageErrorsHelpMessage.h"
+#include "MessageFocusView.h"
 #include "MessageHistoryRedo.h"
 #include "MessageHistoryUndo.h"
 #include "MessageActivateBase.h"
@@ -463,6 +464,10 @@ void QtMainWindow::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_Space:
 			PRINT_TRACES();
 			break;
+
+		case Qt::Key_Tab:
+			MessageFocusView(MessageFocusView::ViewType::TOGGLE).dispatch();
+			break;
 	}
 }
 
@@ -482,6 +487,11 @@ void QtMainWindow::resizeEvent(QResizeEvent *event)
 {
 	m_windowStack.centerSubWindows();
 	QMainWindow::resizeEvent(event);
+}
+
+bool QtMainWindow::focusNextPrevChild(bool next)
+{
+	return false;
 }
 
 void QtMainWindow::about()

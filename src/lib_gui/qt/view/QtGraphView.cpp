@@ -549,6 +549,24 @@ void QtGraphView::activateEdge(Id edgeId)
 	);
 }
 
+#include <iostream>
+void QtGraphView::focus()
+{
+	std::cout << "focus graph" << std::endl;
+	m_hasFocus = true;
+}
+
+void QtGraphView::defocus()
+{
+	std::cout << "defocus graph" << std::endl;
+	m_hasFocus = false;
+}
+
+bool QtGraphView::hasFocus()
+{
+	return m_hasFocus;
+}
+
 void QtGraphView::updateScrollBars()
 {
 	QGraphicsView* view = getView();

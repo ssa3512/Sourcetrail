@@ -66,6 +66,11 @@ public:
 
 	void activateEdge(Id edgeId) override;
 
+	void focus() override;
+	void defocus() override;
+	bool hasFocus() override;
+	bool m_hasFocus = false;
+
 private slots:
 	void updateScrollBars();
 	void finishedTransition();

@@ -54,6 +54,10 @@ public:
 	virtual void scrollToValues(int xValue, int yValue) = 0;
 
 	virtual void activateEdge(Id edgeId) = 0;
+
+	virtual void focus() = 0;
+	virtual void defocus() = 0;
+	virtual bool hasFocus() = 0;
 };
 
 #endif // GRAPH_VIEW_H

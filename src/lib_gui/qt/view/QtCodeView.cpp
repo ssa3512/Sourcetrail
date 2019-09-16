@@ -231,6 +231,24 @@ bool QtCodeView::hasSingleFileCached(const FilePath& filePath) const
 	return m_widget->hasSingleFileCached(filePath);
 }
 
+#include <iostream>
+void QtCodeView::focus()
+{
+	std::cout << "focus code" << std::endl;
+	m_hasFocus = true;
+}
+
+void QtCodeView::defocus()
+{
+	std::cout << "defocus code" << std::endl;
+	m_hasFocus = false;
+}
+
+bool QtCodeView::hasFocus()
+{
+	return m_hasFocus;
+}
+
 void QtCodeView::setNavigationState(const CodeParams& params)
 {
 	m_widget->setActiveTokenIds(params.activeTokenIds);
