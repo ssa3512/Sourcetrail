@@ -84,6 +84,9 @@ public:
 
 	void defocusGraph();
 
+	void activateFocus() override;
+	void expandFocus() override;
+
 private slots:
 	void updateScrollBars();
 	void finishedTransition();

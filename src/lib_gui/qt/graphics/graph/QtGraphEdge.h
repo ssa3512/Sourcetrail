@@ -59,6 +59,8 @@ public:
 
 	void setDirection(TokenComponentAggregation::Direction direction);
 
+	bool isExpandable() const;
+
 	bool isTrailEdge() const;
 	void setIsTrailEdge(std::vector<Vec4i> path, bool horizontal);
 

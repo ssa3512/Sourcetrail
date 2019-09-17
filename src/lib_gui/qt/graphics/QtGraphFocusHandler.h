@@ -22,6 +22,9 @@ public:
 
 	virtual void focusEdge(QtGraphEdge* edge) = 0;
 	virtual void defocusEdge(QtGraphEdge* edge) = 0;
+
+	virtual void activateFocus() = 0;
+	virtual void expandFocus() = 0;
 };
 
 #endif // QT_GRAPH_FOCUS_HANDLER_H

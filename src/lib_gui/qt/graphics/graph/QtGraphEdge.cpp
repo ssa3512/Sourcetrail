@@ -310,7 +310,7 @@ void QtGraphEdge::setIsCoFocused(bool isCoFocused)
 
 void QtGraphEdge::onClick()
 {
-	if (!getData() || m_owner->isGroupNode() || m_target->isGroupNode())
+	if (isExpandable())
 	{
 		QtGraphNode* node = (m_direction == TokenComponentAggregation::DIRECTION_BACKWARD ? m_owner : m_target);
 		if (m_owner->isGroupNode())
@@ -509,6 +509,11 @@ void QtGraphEdge::setDirection(TokenComponentAggregation::Direction direction)
 		m_direction = direction;
 		updateLine();
 	}
+}
+
+bool QtGraphEdge::isExpandable() const
+{
+	return !getData() || m_owner->isGroupNode() || m_target->isGroupNode();
 }
 
 bool QtGraphEdge::isTrailEdge() const

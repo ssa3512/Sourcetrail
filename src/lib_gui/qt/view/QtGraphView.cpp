@@ -642,6 +642,30 @@ void QtGraphView::defocusGraph()
 	}
 }
 
+void QtGraphView::activateFocus()
+{
+	if (m_focusNode)
+	{
+		m_focusNode->onClick();
+	}
+	else if (m_focusEdge)
+	{
+		m_focusEdge->onClick();
+	}
+}
+
+void QtGraphView::expandFocus()
+{
+	if (m_focusNode)
+	{
+		m_focusNode->onCollapseExpand();
+	}
+	else if (m_focusEdge && m_focusEdge->isExpandable())
+	{
+		m_focusEdge->onClick();
+	}
+}
+
 void QtGraphView::updateScrollBars()
 {
 	QGraphicsView* view = getView();
