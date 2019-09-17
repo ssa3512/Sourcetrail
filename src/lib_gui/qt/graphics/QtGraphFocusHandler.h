@@ -15,7 +15,7 @@ public:
 		RIGHT
 	};
 
-	virtual void focusNext(Direction direction) = 0;
+	virtual void focusNext(Direction direction, bool navigateEdges) = 0;
 
 	virtual void focusNode(QtGraphNode* node) = 0;
 	virtual void defocusNode(QtGraphNode* node) = 0;

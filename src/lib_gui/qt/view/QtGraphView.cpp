@@ -571,14 +571,44 @@ bool QtGraphView::hasFocus()
 	return m_hasFocus;
 }
 
-void QtGraphView::focusNext(Direction direction)
+void QtGraphView::focusNext(Direction direction, bool navigateEdges)
 {
 	if (m_focusNode)
 	{
-		QtGraphNode* nextNode = findNextNode(m_focusNode, direction);
-		if (nextNode)
+		if (navigateEdges)
 		{
-			focusNode(nextNode);
+			QtGraphEdge* nextEdge = findNextEdge(m_focusNode, direction);
+			if (nextEdge)
+			{
+				focusEdge(nextEdge);
+			}
+		}
+		else
+		{
+			QtGraphNode* nextNode = findNextNode(m_focusNode, direction);
+			if (nextNode)
+			{
+				focusNode(nextNode);
+			}
+		}
+	}
+	else if (m_focusEdge)
+	{
+		if (m_focusEdge->isHorizontal() == (direction == Direction::UP || direction == Direction::DOWN))
+		{
+			QtGraphEdge* nextEdge = findNextEdge(m_focusEdge, direction);
+			if (nextEdge)
+			{
+				focusEdge(nextEdge);
+			}
+		}
+		else
+		{
+			QtGraphNode* nextNode = findNextNode(m_focusEdge, direction);
+			if (nextNode)
+			{
+				focusNode(nextNode);
+			}
 		}
 	}
 }
@@ -1070,7 +1100,7 @@ void QtGraphView::doResize()
 	getView()->setSceneRect(getSceneRect(m_oldNodes));
 }
 
-QtGraphNode* QtGraphView::findNextNode(const QtGraphNode* node, Direction direction)
+QtGraphNode* QtGraphView::findNextNode(QtGraphNode* node, Direction direction)
 {
 	switch (direction)
 	{
@@ -1135,6 +1165,76 @@ QtGraphNode* QtGraphView::findNextNode(const QtGraphNode* node, Direction direct
 		}
 	}
 
+	return nullptr;
+}
+
+QtGraphNode* QtGraphView::findNextNode(QtGraphEdge* edge, Direction direction)
+{
+	if (edge->isHorizontal())
+	{
+		if ((direction == Direction::LEFT) == (edge->getOwner()->getPosition().x() < edge->getTarget()->getPosition().x()))
+		{
+			return edge->getOwner();
+		}
+		else
+		{
+			return edge->getTarget();
+		}
+	}
+	else
+	{
+		if ((direction == Direction::UP) == (edge->getOwner()->getPosition().y() < edge->getTarget()->getPosition().y()))
+		{
+			return edge->getOwner();
+		}
+		else
+		{
+			return edge->getTarget();
+		}
+	}
+
+	return nullptr;
+}
+
+QtGraphEdge* QtGraphView::findNextEdge(QtGraphNode* node, Direction direction)
+{
+	QtGraphNode* parent = node->getLastNonGroupParent();
+
+	for (QtGraphEdge* edge : m_oldEdges)
+	{
+		QtGraphNode* ownerParent = edge->getOwner()->getLastNonGroupParent();
+		QtGraphNode* targetParent = edge->getTarget()->getLastNonGroupParent();
+
+		QtGraphNode* otherParent = nullptr;
+		if (ownerParent == parent)
+		{
+			otherParent = targetParent;
+		}
+		else if (targetParent == parent)
+		{
+			otherParent = ownerParent;
+		}
+		else
+		{
+			continue;
+		}
+
+		bool h = edge->isHorizontal();
+
+		if ((!h && direction == Direction::UP && otherParent->getPosition().y() < parent->getPosition().y()) ||
+			(!h && direction == Direction::DOWN && otherParent->getPosition().y() > parent->getPosition().y()) ||
+			(h && direction == Direction::LEFT && otherParent->getPosition().x() < parent->getPosition().x()) ||
+			(h && direction == Direction::RIGHT && otherParent->getPosition().x() > parent->getPosition().x()))
+		{
+			return edge;
+		}
+	}
+
+	return nullptr;
+}
+
+QtGraphEdge* QtGraphView::findNextEdge(QtGraphEdge* Edge, Direction direction)
+{
 	return nullptr;
 }
 

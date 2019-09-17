@@ -59,6 +59,7 @@ public:
 
 	void setDirection(TokenComponentAggregation::Direction direction);
 
+	bool isHorizontal() const;
 	bool isExpandable() const;
 
 	bool isTrailEdge() const;

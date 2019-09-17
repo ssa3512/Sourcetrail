@@ -74,7 +74,7 @@ public:
 	bool m_hasFocus = false;
 
 	// QtGraphFocusHandler implementation
-	void focusNext(Direction direction) override;
+	void focusNext(Direction direction, bool navigateEdges) override;
 
 	void focusNode(QtGraphNode* node) override;
 	void defocusNode(QtGraphNode* node) override;
@@ -121,7 +121,11 @@ private:
 
 	void doResize();
 
-	QtGraphNode* findNextNode(const QtGraphNode* node, Direction direction);
+	QtGraphNode* findNextNode(QtGraphNode* node, Direction direction);
+	QtGraphNode* findNextNode(QtGraphEdge* edge, Direction direction);
+	QtGraphEdge* findNextEdge(QtGraphNode* node, Direction direction);
+	QtGraphEdge* findNextEdge(QtGraphEdge* Edge, Direction direction);
+
 	QtGraphNode* findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first);
 
 	QtGraphNode* findSibling(const QtGraphNode* node, Direction direction);

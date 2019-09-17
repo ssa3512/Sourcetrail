@@ -511,6 +511,11 @@ void QtGraphEdge::setDirection(TokenComponentAggregation::Direction direction)
 	}
 }
 
+bool QtGraphEdge::isHorizontal() const
+{
+	return m_isHorizontal;
+}
+
 bool QtGraphEdge::isExpandable() const
 {
 	return !getData() || m_owner->isGroupNode() || m_target->isGroupNode();
