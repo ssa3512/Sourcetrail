@@ -7,12 +7,21 @@
 #include "MessageFocusOut.h"
 #include "MessageTabOpenWith.h"
 #include "MessageTooltipShow.h"
+#include "QtGraphFocusHandler.h"
 #include "ResourcePaths.h"
 
 #include "TokenComponentFilePath.h"
 
-QtGraphNodeData::QtGraphNodeData(const Node* data, const std::wstring& name, bool childVisible, bool hasQualifier, bool isInteractive)
-	: m_data(data)
+QtGraphNodeData::QtGraphNodeData(
+	QtGraphFocusHandler* focusHandler,
+	const Node* data,
+	const std::wstring& name,
+	bool childVisible,
+	bool hasQualifier,
+	bool isInteractive
+)
+	: m_focusHandler(focusHandler)
+	, m_data(data)
 	, m_childVisible(childVisible)
 	, m_hasQualifier(hasQualifier)
 	, m_isInteractive(isInteractive)
@@ -70,7 +79,7 @@ void QtGraphNodeData::onMiddleClick()
 void QtGraphNodeData::updateStyle()
 {
 	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleForNodeType(
-		m_data->getType(), m_data->isExplicit(), m_isActive, m_isHovering, m_childVisible, m_hasQualifier);
+		m_data->getType(), m_data->isExplicit(), m_isActive, m_isFocused, m_isCoFocused, m_childVisible, m_hasQualifier);
 
 	TokenComponentFilePath* component = m_data->getComponent<TokenComponentFilePath>();
 	if (component && !component->isComplete())
@@ -83,6 +92,7 @@ void QtGraphNodeData::updateStyle()
 
 void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->focusNode(this);
 	MessageFocusIn(std::vector<Id>(1, m_data->getId()), TOOLTIP_ORIGIN_GRAPH).dispatch();
 
 	if (!m_isInteractive)
@@ -108,5 +118,6 @@ void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 
 void QtGraphNodeData::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->defocusNode(this);
 	MessageFocusOut(std::vector<Id>(1, m_data->getId())).dispatch();
 }

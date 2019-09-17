@@ -236,9 +236,15 @@ void QtGraphNode::hoverEnter()
 	}
 }
 
+void QtGraphNode::setIsFocused(bool focused)
+{
+	m_isFocused = focused;
+	updateStyle();
+}
+
 void QtGraphNode::focusIn()
 {
-	m_isHovering = true;
+	m_isCoFocused = true;
 
 	forEachEdge(
 		[](QtGraphEdge* edge)
@@ -255,7 +261,7 @@ void QtGraphNode::focusIn()
 
 void QtGraphNode::focusOut()
 {
-	m_isHovering = false;
+	m_isCoFocused = false;
 
 	forEachEdge(
 		[](QtGraphEdge* edge)

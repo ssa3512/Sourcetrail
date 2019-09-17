@@ -5,13 +5,14 @@
 #include "QtGraphNode.h"
 
 class QtCountCircleItem;
+class QtGraphFocusHandler;
 
 class QtGraphNodeBundle
 	: public QtGraphNode
 {
 	Q_OBJECT
 public:
-	QtGraphNodeBundle(Id tokenId, size_t nodeCount, NodeType type, std::wstring name);
+	QtGraphNodeBundle(QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name);
 	virtual ~QtGraphNodeBundle();
 
 	// QtGraphNode implementation
@@ -26,6 +27,7 @@ protected:
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
+	QtGraphFocusHandler* m_focusHandler;
 	QtCountCircleItem* m_circle;
 	Id m_tokenId;
 	NodeType m_type;

@@ -77,7 +77,7 @@ Id QtGraphNodeGroup::getTokenId() const
 
 void QtGraphNodeGroup::onClick()
 {
-	if (!m_interactive || !m_isHovering)
+	if (!m_interactive || !m_isFocused)
 	{
 		return;
 	}
@@ -94,7 +94,7 @@ void QtGraphNodeGroup::onClick()
 
 void QtGraphNodeGroup::updateStyle()
 {
-	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isHovering);
+	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isFocused);
 
 	if (m_background)
 	{
@@ -131,7 +131,7 @@ void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
 	if (!m_background || m_background->contains(event->pos()))
 	{
-		if (!m_isHovering)
+		if (!m_isFocused)
 		{
 			if (m_type == GroupType::FILE || m_type == GroupType::NAMESPACE)
 			{
@@ -143,7 +143,7 @@ void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 			}
 		}
 	}
-	else if (m_isHovering)
+	else if (m_isFocused)
 	{
 		hoverLeaveEvent(nullptr);
 	}

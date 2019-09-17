@@ -73,6 +73,7 @@ public:
 
 	void hoverEnter();
 
+	void setIsFocused(bool focused);
 	void focusIn();
 	void focusOut();
 
@@ -134,7 +135,8 @@ protected:
 
 	bool m_isActive = false;
 	bool m_multipleActive = false;
-	bool m_isHovering = false;
+	bool m_isFocused = false;
+	bool m_isCoFocused = false;
 
 private:
 	std::list<std::shared_ptr<QtGraphNodeComponent>> m_components;

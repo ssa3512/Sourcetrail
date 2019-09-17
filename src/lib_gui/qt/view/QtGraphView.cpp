@@ -341,6 +341,8 @@ void QtGraphView::rebuildGraph(
 		m_nodes.clear();
 		m_activeNodes.clear();
 		m_oldActiveNode = nullptr;
+		m_focusNode = nullptr;
+		m_focusEdge = nullptr;
 		m_virtualNodeRects.clear();
 
 		for (unsigned int i = 0; i < nodes.size(); i++)
@@ -406,6 +408,8 @@ void QtGraphView::clear()
 	m_onQtThread([this]()
 	{
 		m_oldActiveNode = nullptr;
+		m_focusNode = nullptr;
+		m_focusEdge = nullptr;
 		m_activeNodes.clear();
 
 		for (QtGraphNode* node : m_oldNodes)
@@ -565,6 +569,41 @@ void QtGraphView::defocus()
 bool QtGraphView::hasFocus()
 {
 	return m_hasFocus;
+}
+
+void QtGraphView::focusNode(QtGraphNode* node)
+{
+	if (m_focusNode)
+	{
+		m_focusNode->setIsFocused(false);
+	}
+
+	node->setIsFocused(true);
+	m_focusNode = node;
+}
+
+void QtGraphView::defocusNode(QtGraphNode* node)
+{
+	QtGraphNode* parent = node->getParent();
+	while (parent && !parent->isDataNode())
+	{
+		parent = parent->getParent();
+	}
+
+	if (parent)
+	{
+		focusNode(parent);
+	}
+}
+
+void QtGraphView::focusEdge(QtGraphEdge* edge)
+{
+
+}
+
+void QtGraphView::defocusEdge(QtGraphEdge* edge)
+{
+
 }
 
 void QtGraphView::updateScrollBars()
@@ -1002,7 +1041,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	if (node->isGraphNode())
 	{
 		newNode = new QtGraphNodeData(
-			node->data, node->name, node->childVisible, node->getQualifierNode() != nullptr, interactive);
+			this, node->data, node->name, node->childVisible, node->getQualifierNode() != nullptr, interactive);
 	}
 	else if (node->isAccessNode())
 	{
@@ -1014,7 +1053,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	}
 	else if (node->isBundleNode())
 	{
-		newNode = new QtGraphNodeBundle(node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name);
+		newNode = new QtGraphNodeBundle(this, node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name);
 	}
 	else if (node->isQualifierNode())
 	{

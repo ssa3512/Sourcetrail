@@ -8,6 +8,7 @@
 
 #include "GraphView.h"
 #include "Graph.h"
+#include "QtGraphFocusHandler.h"
 #include "QtScrollSpeedChangeListener.h"
 #include "QtThreadedFunctor.h"
 #include "types.h"
@@ -28,6 +29,7 @@ class QtSelfRefreshIconButton;
 class QtGraphView
 	: public QObject
 	, public GraphView
+	, public QtGraphFocusHandler
 {
 	Q_OBJECT
 
@@ -70,6 +72,13 @@ public:
 	void defocus() override;
 	bool hasFocus() override;
 	bool m_hasFocus = false;
+
+	// QtGraphFocusHandler implementation
+	void focusNode(QtGraphNode* node) override;
+	void defocusNode(QtGraphNode* node) override;
+
+	void focusEdge(QtGraphEdge* edge) override;
+	void defocusEdge(QtGraphEdge* edge) override;
 
 private slots:
 	void updateScrollBars();
@@ -142,6 +151,9 @@ private:
 
 	std::vector<QtGraphNode*> m_activeNodes;
 	QtGraphNode* m_oldActiveNode = nullptr;
+
+	QtGraphNode* m_focusNode = nullptr;
+	QtGraphEdge* m_focusEdge = nullptr;
 
 	bool m_centerActiveNode;
 	bool m_scrollToTop;

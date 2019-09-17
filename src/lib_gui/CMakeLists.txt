@@ -94,8 +94,6 @@ add_files(
 
 	qt/graphics/base/QtCountCircleItem.cpp
 	qt/graphics/base/QtCountCircleItem.h
-	qt/graphics/base/QtGraphicsView.cpp
-	qt/graphics/base/QtGraphicsView.h
 	qt/graphics/base/QtLineItemAngled.cpp
 	qt/graphics/base/QtLineItemAngled.h
 	qt/graphics/base/QtLineItemBase.cpp
@@ -132,6 +130,10 @@ add_files(
 	qt/graphics/graph/QtGraphNodeQualifier.h
 	qt/graphics/graph/QtGraphNodeText.cpp
 	qt/graphics/graph/QtGraphNodeText.h
+
+	qt/graphics/QtGraphFocusHandler.h
+	qt/graphics/QtGraphicsView.cpp
+	qt/graphics/QtGraphicsView.h
 
 	qt/network/QtIDECommunicationController.cpp
 	qt/network/QtIDECommunicationController.h

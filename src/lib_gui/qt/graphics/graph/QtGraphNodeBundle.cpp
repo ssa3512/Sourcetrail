@@ -3,13 +3,14 @@
 #include <QBrush>
 #include <QPen>
 
-#include "MessageGraphNodeBundleSplit.h"
-
 #include "GraphViewStyle.h"
+#include "MessageGraphNodeBundleSplit.h"
 #include "QtCountCircleItem.h"
+#include "QtGraphFocusHandler.h"
 
-QtGraphNodeBundle::QtGraphNodeBundle(Id tokenId, size_t nodeCount, NodeType type, std::wstring name)
+QtGraphNodeBundle::QtGraphNodeBundle(QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name)
 	: QtGraphNode()
+	, m_focusHandler(focusHandler)
 	, m_tokenId(tokenId)
 	, m_type(type)
 {
@@ -51,11 +52,11 @@ void QtGraphNodeBundle::updateStyle()
 	GraphViewStyle::NodeStyle style;
 	if (!m_type.isUnknownSymbol())
 	{
-		style = GraphViewStyle::getStyleForNodeType(m_type, true, false, m_isHovering, false, false);
+		style = GraphViewStyle::getStyleForNodeType(m_type, true, false, m_isFocused, m_isCoFocused, false, false);
 	}
 	else
 	{
-		style = GraphViewStyle::getStyleOfBundleNode(m_isHovering);
+		style = GraphViewStyle::getStyleOfBundleNode(m_isFocused);
 	}
 	setStyle(style);
 
@@ -78,10 +79,12 @@ void QtGraphNodeBundle::updateStyle()
 
 void QtGraphNodeBundle::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->focusNode(this);
 	focusIn();
 }
 
 void QtGraphNodeBundle::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->defocusNode(this);
 	focusOut();
 }

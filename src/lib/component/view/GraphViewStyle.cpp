@@ -364,7 +364,7 @@ GraphViewStyle::NodeMargins GraphViewStyle::getMarginsOfGroupNode(GroupType type
 }
 
 GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
-	NodeType type, bool defined, bool isActive, bool isFocused, bool hasChildren, bool hasQualifier
+	NodeType type, bool defined, bool isActive, bool isFocused, bool isCoFocused, bool hasChildren, bool hasQualifier
 ){
 	return getStyleForNodeType(
 		type.getNodeStyle(),
@@ -373,6 +373,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
 		defined,
 		isActive,
 		isFocused,
+		isCoFocused,
 		hasChildren,
 		hasQualifier
 	);
@@ -380,17 +381,17 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
 
 GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
 	NodeType::StyleType type, const std::string& underscoredTypeString,
-	const FilePath& iconPath, bool defined, bool isActive, bool isFocused,
+	const FilePath& iconPath, bool defined, bool isActive, bool isFocused, bool isCoFocused,
 	bool hasChildren, bool hasQualifier
 ){
 	NodeStyle style;
 
-	style.color = getNodeColor(underscoredTypeString, isActive || isFocused);
+	style.color = getNodeColor(underscoredTypeString, isActive || isCoFocused);
 
 	style.fontName = getFontNameForDataNode();
 	style.fontSize = getFontSizeForStyleType(type);
 
-	if (isActive || isFocused)
+	if (isActive || isCoFocused)
 	{
 		style.fontBold = true;
 	}
@@ -476,6 +477,12 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
 		}
 	}
 
+	if (isFocused)
+	{
+		style.color.border = "red";
+		style.borderWidth = 2;
+	}
+
 	return style;
 }
 
@@ -531,6 +538,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfBundleNode(bool isFocused)
 		ResourcePaths::getGuiPath().concatenate(L"graph_view/images/bundle.png"),
 		true,
 		false,
+		isFocused,
 		isFocused,
 		false,
 		false

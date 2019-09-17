@@ -121,7 +121,7 @@ public:
 	static NodeMargins getMarginsOfGroupNode(GroupType type, bool hasName);
 
 	static NodeStyle getStyleForNodeType(
-		NodeType type, bool defined, bool isActive, bool isFocused, bool hasChildren, bool hasQualifier);
+		NodeType type, bool defined, bool isActive, bool isFocused, bool isCoFocused, bool hasChildren, bool hasQualifier);
 	static NodeStyle getStyleOfAccessNode();
 	static NodeStyle getStyleOfExpandToggleNode();
 	static NodeStyle getStyleOfCountCircle();
@@ -149,7 +149,7 @@ public:
 private:
 	static NodeStyle getStyleForNodeType(
 		NodeType::StyleType type, const std::string& underscoredTypeString,
-		const FilePath& iconPath, bool defined, bool isActive, bool isFocused,
+		const FilePath& iconPath, bool defined, bool isActive, bool isFocused, bool isCoFocused,
 		bool hasChildren, bool hasQualifier);
 
 	static float getCharWidth(NodeType::StyleType type);
