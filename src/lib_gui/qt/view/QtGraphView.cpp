@@ -56,7 +56,7 @@ QtGraphView::QtGraphView(ViewLayout* viewLayout)
 	widget->setLayout(layout);
 
 	QGraphicsScene* scene = new QGraphicsScene(widget);
-	QtGraphicsView* view = new QtGraphicsView(widget);
+	QtGraphicsView* view = new QtGraphicsView(this, widget);
 	view->setScene(scene);
 	view->setDragMode(QGraphicsView::ScrollHandDrag);
 	view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -571,6 +571,18 @@ bool QtGraphView::hasFocus()
 	return m_hasFocus;
 }
 
+void QtGraphView::focusNext(Direction direction)
+{
+	if (m_focusNode)
+	{
+		QtGraphNode* nextNode = findNextNode(m_focusNode, direction);
+		if (nextNode)
+		{
+			focusNode(nextNode);
+		}
+	}
+}
+
 void QtGraphView::focusNode(QtGraphNode* node)
 {
 	if (node == m_focusNode)
@@ -1032,6 +1044,208 @@ QtGraphicsView* QtGraphView::getView() const
 void QtGraphView::doResize()
 {
 	getView()->setSceneRect(getSceneRect(m_oldNodes));
+}
+
+QtGraphNode* QtGraphView::findNextNode(const QtGraphNode* node, Direction direction)
+{
+	switch (direction)
+	{
+		case Direction::UP:
+		{
+			QtGraphNode* nextNode = findSibling(node, direction);
+			if (nextNode)
+			{
+				QtGraphNode* childNode = nextNode;
+				QtGraphNode* lastChildNode = nullptr;
+				while (childNode)
+				{
+					childNode = findChildNodeRecursive(childNode->getSubNodes(), false);
+					if (childNode)
+					{
+						lastChildNode = childNode;
+					}
+				}
+
+				if (lastChildNode && lastChildNode->getPosition().y() < node->getPosition().y())
+				{
+					return lastChildNode;
+				}
+
+				return nextNode;
+			}
+
+			QtGraphNode* parent = node->getParent();
+			while (parent && !parent->isDataNode())
+			{
+				parent = parent->getParent();
+			}
+
+			if (parent)
+			{
+				return parent;
+			}
+			break;
+		}
+
+		case Direction::DOWN:
+		{
+			if (node->getSubNodes().size())
+			{
+				QtGraphNode* nextNode = findChildNodeRecursive(node->getSubNodes(), true);
+				if (nextNode)
+				{
+					return nextNode;
+				}
+			}
+		}
+
+		case Direction::LEFT:
+		case Direction::RIGHT:
+		{
+			QtGraphNode* nextNode = findSibling(node, direction);
+			if (nextNode)
+			{
+				return nextNode;
+			}
+			break;
+		}
+	}
+
+	return nullptr;
+}
+
+QtGraphNode* QtGraphView::findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first)
+{
+	QtGraphNode* result = nullptr;
+
+	for (QtGraphNode* node : nodes)
+	{
+		if (node->isDataNode() || node->isBundleNode())
+		{
+			result = node;
+			if (first)
+			{
+				break;
+			}
+		}
+
+		QtGraphNode* newResult = findChildNodeRecursive(node->getSubNodes(), first);
+		if (newResult)
+		{
+			result = newResult;
+			if (first)
+			{
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+QtGraphNode* QtGraphView::findSibling(const QtGraphNode* node, Direction direction)
+{
+	QtGraphNode* nextSibling = nullptr;
+	Vec2i pos = node->getPosition();
+	Vec4i rect = node->getBoundingRect();
+	float minDist = 0;
+
+	for (auto siblings : getSiblingsHierarchyRecursive(node))
+	{
+		for (QtGraphNode* sibling : siblings)
+		{
+			if (sibling == node)
+			{
+				continue;
+			}
+
+			Vec4i rectS = sibling->getBoundingRect();
+
+			bool top = rectS.w() < rect.y();
+			bool bottom = rectS.y() > rect.w();
+			bool left = rectS.z() < rect.x();
+			bool right = rectS.x() > rect.z();
+
+			bool isDir =
+				(direction == Direction::UP && (top || (!top && !bottom && !left && !right))) ||
+				(direction == Direction::DOWN && bottom) ||
+				(direction == Direction::LEFT && left) ||
+				(direction == Direction::RIGHT && right);
+
+			if (isDir)
+			{
+				float distX = 0;
+				float distY = 0;
+
+				float distXMult = (direction == Direction::UP || direction == Direction::DOWN) ? 2 : 1;
+				float distYMult = (direction == Direction::LEFT || direction == Direction::RIGHT) ? 2 : 1;
+
+				if (top) distY = rect.y() - rectS.w();
+				if (bottom) distY = rectS.y() - rect.w();
+				if (left) distX = rect.x() - rectS.z();
+				if (right) distX = rectS.x() - rect.z();
+
+				float dist = distX * distXMult + distY * distYMult;
+				if (!nextSibling || dist < minDist)
+				{
+					nextSibling = sibling;
+					minDist = dist;
+				}
+			}
+		}
+
+		if (nextSibling)
+		{
+			break;
+		}
+	}
+
+	return nextSibling;
+}
+
+std::vector<std::vector<QtGraphNode*>> QtGraphView::getSiblingsHierarchyRecursive(const QtGraphNode* node)
+{
+	std::vector<std::vector<QtGraphNode*>> siblingsList;
+
+	QtGraphNode* parent = node->getParent();
+	while (parent && !parent->isDataNode())
+	{
+		parent = parent->getParent();
+	}
+
+	if (parent)
+	{
+		std::vector<QtGraphNode*> siblings;
+		addSiblingsRecursive(parent->getSubNodes(), siblings);
+		if (siblings.size())
+		{
+			siblingsList.push_back(siblings);
+		}
+
+		utility::append(siblingsList, getSiblingsHierarchyRecursive(parent));
+	}
+	else
+	{
+		siblingsList.push_back(utility::toVector(m_oldNodes));
+	}
+
+	return siblingsList;
+}
+
+void QtGraphView::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings)
+{
+	for (QtGraphNode* node : nodes)
+	{
+		if (node->isDataNode() || node->isBundleNode())
+		{
+			utility::append(siblings, utility::toVector(nodes));
+			return;
+		}
+		else
+		{
+			addSiblingsRecursive(node->getSubNodes(), siblings);
+		}
+	}
 }
 
 QtGraphNode* QtGraphView::findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId)

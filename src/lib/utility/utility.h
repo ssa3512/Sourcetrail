@@ -5,6 +5,7 @@
 #include <cstdarg>
 #include <deque>
 #include <functional>
+#include <list>
 #include <map>
 #include <set>
 #include <vector>
@@ -47,6 +48,9 @@ namespace utility
 
 	template<typename T>
 	std::vector<T> toVector(const std::set<T>& d);
+
+	template<typename T>
+	std::vector<T> toVector(const std::list<T>& d);
 
 	template<typename T>
 	std::set<T>toSet(const std::vector<T>& d);
@@ -234,6 +238,15 @@ std::vector<T> utility::toVector(const std::deque<T>& d)
 
 template<typename T>
 std::vector<T> utility::toVector(const std::set<T>& d)
+{
+	std::vector<T> v;
+	v.reserve(d.size());
+	v.insert(v.begin(), d.begin(), d.end());
+	return v;
+}
+
+template<typename T>
+std::vector<T> utility::toVector(const std::list<T>& d)
 {
 	std::vector<T> v;
 	v.reserve(d.size());

@@ -21,6 +21,7 @@
 #include "QtContextMenu.h"
 #include "QtFileDialog.h"
 #include "QtGraphEdge.h"
+#include "QtGraphFocusHandler.h"
 #include "QtGraphNode.h"
 #include "QtGraphNodeBundle.h"
 #include "QtGraphNodeData.h"
@@ -30,8 +31,9 @@
 #include "utilityApp.h"
 #include "utilityQt.h"
 
-QtGraphicsView::QtGraphicsView(QWidget* parent)
+QtGraphicsView::QtGraphicsView(QtGraphFocusHandler* focusHandler, QWidget* parent)
 	: QGraphicsView(parent)
+	, m_focusHandler(focusHandler)
 	, m_zoomFactor(1.0f)
 	, m_appZoomFactor(1.0f)
 	, m_up(false)
@@ -283,6 +285,18 @@ void QtGraphicsView::keyPressEvent(QKeyEvent* event)
 
 	switch (event->key())
 	{
+		case Qt::Key_Up:
+			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::UP);
+			break;
+		case Qt::Key_Down:
+			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::DOWN);
+			break;
+		case Qt::Key_Left:
+			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::LEFT);
+			break;
+		case Qt::Key_Right:
+			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::RIGHT);
+			break;
 		case Qt::Key_W:
 			m_up = true;
 			break;

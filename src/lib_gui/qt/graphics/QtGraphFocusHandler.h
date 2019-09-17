@@ -7,6 +7,16 @@ class QtGraphNode;
 class QtGraphFocusHandler
 {
 public:
+	enum class Direction
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT
+	};
+
+	virtual void focusNext(Direction direction) = 0;
+
 	virtual void focusNode(QtGraphNode* node) = 0;
 	virtual void defocusNode(QtGraphNode* node) = 0;
 

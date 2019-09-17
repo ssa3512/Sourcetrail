@@ -74,6 +74,8 @@ public:
 	bool m_hasFocus = false;
 
 	// QtGraphFocusHandler implementation
+	void focusNext(Direction direction) override;
+
 	void focusNode(QtGraphNode* node) override;
 	void defocusNode(QtGraphNode* node) override;
 
@@ -115,6 +117,13 @@ private:
 	QtGraphicsView* getView() const;
 
 	void doResize();
+
+	QtGraphNode* findNextNode(const QtGraphNode* node, Direction direction);
+	QtGraphNode* findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first);
+
+	QtGraphNode* findSibling(const QtGraphNode* node, Direction direction);
+	std::vector<std::vector<QtGraphNode*>> getSiblingsHierarchyRecursive(const QtGraphNode* node);
+	void addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings);
 
 	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId);
 
