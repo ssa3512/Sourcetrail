@@ -4,14 +4,12 @@
 #include <QGraphicsSceneEvent>
 #include <QGraphicsItemGroup>
 
-#include "GraphViewStyle.h"
 #include "Edge.h"
-#include "TokenComponentAggregation.h"
-#include "TokenComponentInheritanceChain.h"
-#include "TokenComponentIsAmbiguous.h"
+#include "GraphViewStyle.h"
 #include "QtLineItemAngled.h"
 #include "QtLineItemBezier.h"
 #include "QtLineItemStraight.h"
+#include "QtGraphFocusHandler.h"
 #include "QtGraphNode.h"
 #include "MessageActivateEdge.h"
 #include "MessageActivateTrailEdge.h"
@@ -21,6 +19,9 @@
 #include "MessageGraphNodeHide.h"
 #include "MessageTooltipShow.h"
 #include "MessageTooltipHide.h"
+#include "TokenComponentAggregation.h"
+#include "TokenComponentInheritanceChain.h"
+#include "TokenComponentIsAmbiguous.h"
 #include "utility.h"
 
 QtGraphEdge* QtGraphEdge::s_focusedEdge = nullptr;
@@ -35,6 +36,7 @@ void QtGraphEdge::unfocusBezierEdge()
 }
 
 QtGraphEdge::QtGraphEdge(
+	QtGraphFocusHandler* focusHandler,
 	QtGraphNode* owner,
 	QtGraphNode* target,
 	const Edge* data,
@@ -44,20 +46,15 @@ QtGraphEdge::QtGraphEdge(
 	bool horizontal,
 	TokenComponentAggregation::Direction direction
 )
-	: m_data(data)
+	: m_focusHandler(focusHandler)
+	, m_data(data)
 	, m_owner(owner)
 	, m_target(target)
-	, m_child(nullptr)
 	, m_isActive(isActive)
-	, m_isFocused(false)
 	, m_isHorizontal(horizontal)
 	, m_weight(weight)
 	, m_direction(direction)
-	, m_isTrailEdge(false)
-	, m_useBezier(false)
 	, m_isInteractive(isInteractive)
-	, m_mousePos(0.0f, 0.0f)
-	, m_mouseMoved(false)
 {
 	this->setCursor(Qt::PointingHandCursor);
 
@@ -108,7 +105,7 @@ void QtGraphEdge::updateLine()
 
 	Edge::EdgeType type = (getData() ? getData()->getType() : Edge::EDGE_AGGREGATION);
 	GraphViewStyle::EdgeStyle style =
-		GraphViewStyle::getStyleForEdgeType(type, m_isActive | m_isFocused, false, m_isTrailEdge, isAmbiguous());
+		GraphViewStyle::getStyleForEdgeType(type, m_isActive | m_isCoFocused, m_isFocused, m_isTrailEdge, isAmbiguous());
 
 	Vec4i ownerRect = owner->getBoundingRect();
 	Vec4i targetRect = target->getBoundingRect();
@@ -302,6 +299,15 @@ void QtGraphEdge::setIsFocused(bool isFocused)
 	}
 }
 
+void QtGraphEdge::setIsCoFocused(bool isCoFocused)
+{
+	if (m_isCoFocused != isCoFocused)
+	{
+		m_isCoFocused = isCoFocused;
+		updateLine();
+	}
+}
+
 void QtGraphEdge::onClick()
 {
 	if (!getData() || m_owner->isGroupNode() || m_target->isGroupNode())
@@ -364,9 +370,9 @@ void QtGraphEdge::onHide()
 
 void QtGraphEdge::focusIn()
 {
-	if (!m_isFocused)
+	if (!m_isCoFocused)
 	{
-		m_isFocused = true;
+		m_isCoFocused = true;
 		updateLine();
 
 		if (s_focusedEdge == this)
@@ -409,9 +415,9 @@ void QtGraphEdge::focusIn()
 
 void QtGraphEdge::focusOut()
 {
-	if (m_isFocused)
+	if (m_isCoFocused)
 	{
-		m_isFocused = false;
+		m_isCoFocused = false;
 		updateLine();
 
 		if (s_focusedEdge == this)
@@ -454,6 +460,8 @@ void QtGraphEdge::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void QtGraphEdge::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->focusEdge(this);
+
 	if (m_useBezier)
 	{
 		if (s_focusedBezierEdge && s_focusedBezierEdge != this)
@@ -478,6 +486,8 @@ void QtGraphEdge::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 
 void QtGraphEdge::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->defocusEdge(this);
+
 	s_focusedBezierEdge = nullptr;
 
 	if (getData() && !m_useBezier)

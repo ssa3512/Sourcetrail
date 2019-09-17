@@ -621,12 +621,14 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 {
 	EdgeStyle style;
 
-	style.width = isActive ? 4 : 2;
-	style.zValue = isActive ? 5 : 2;
+	bool active = isActive || isFocused;
+
+	style.width = active ? 4 : 2;
+	style.zValue = active ? 5 : 2;
 
 	if (isTrailEdge)
 	{
-		style.zValue = isActive ? 5 : 2;
+		style.zValue = active ? 5 : 2;
 	}
 
 	style.arrowLength = 5;
@@ -641,7 +643,14 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 	style.originOffset.y = 5;
 	style.targetOffset.y = -5;
 
-	style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)), isActive || isFocused);
+	if (isFocused)
+	{
+		style.color = "red";
+	}
+	else
+	{
+		style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)), isActive);
+	}
 
 	switch (type)
 	{
@@ -654,7 +663,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		style.originOffset.y = 0;
 		style.targetOffset.y = 0;
 		style.verticalOffset = 0;
-		style.zValue = isActive ? 1 : -5;
+		style.zValue = active ? 1 : -5;
 		break;
 
 	case Edge::EDGE_CALL:
@@ -662,7 +671,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		style.targetOffset.y = -3;
 		style.verticalOffset = 4;
 
-		if (isTrailEdge && isActive)
+		if (isTrailEdge && active)
 		{
 			style.width = 3;
 			style.color = ColorScheme::getInstance()->getColor(
@@ -687,17 +696,17 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		style.targetOffset.y = -10;
 		style.verticalOffset = 0;
 		style.cornerRadius = 7;
-		style.zValue = isActive ? 2 : -3;
-		style.width = isActive ? 3 : 2;
+		style.zValue = active ? 2 : -3;
+		style.width = active ? 3 : 2;
 
 		if (isTrailEdge)
 		{
-			style.zValue = isActive ? 2 : -20;
+			style.zValue = active ? 2 : -20;
 		}
 		break;
 
 	case Edge::EDGE_TEMPLATE_SPECIALIZATION:
-		style.zValue = isActive ? 2 : -3;
+		style.zValue = active ? 2 : -3;
 		style.arrowLength = 10;
 		style.arrowWidth = 13;
 		style.arrowClosed = true;
@@ -705,7 +714,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		break;
 
 	case Edge::EDGE_INCLUDE:
-		style.zValue = isActive ? 2 : -3;
+		style.zValue = active ? 2 : -3;
 	case Edge::EDGE_MACRO_USAGE:
 		style.originOffset.y = 0;
 		style.targetOffset.y = 0;

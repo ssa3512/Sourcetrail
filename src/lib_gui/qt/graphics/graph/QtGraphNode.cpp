@@ -238,8 +238,11 @@ void QtGraphNode::hoverEnter()
 
 void QtGraphNode::setIsFocused(bool focused)
 {
-	m_isFocused = focused;
-	updateStyle();
+	if (m_isFocused != focused)
+	{
+		m_isFocused = focused;
+		updateStyle();
+	}
 }
 
 void QtGraphNode::focusIn()

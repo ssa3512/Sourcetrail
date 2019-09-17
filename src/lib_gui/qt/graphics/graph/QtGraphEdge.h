@@ -11,6 +11,7 @@
 #include "TokenComponentAggregation.h"
 
 class Edge;
+class QtGraphFocusHandler;
 class QtGraphNode;
 
 class QtGraphEdge
@@ -24,6 +25,7 @@ public:
 	static void unfocusBezierEdge();
 
 	QtGraphEdge(
+		QtGraphFocusHandler* focusHandler,
 		QtGraphNode* owner,
 		QtGraphNode* target,
 		const Edge* data,
@@ -47,6 +49,7 @@ public:
 	void setIsActive(bool isActive);
 
 	void setIsFocused(bool isFocused);
+	void setIsCoFocused(bool isCoFocused);
 
 	void onClick();
 	void onHide();
@@ -79,29 +82,32 @@ private:
 	// used to unfocus recent edge, because hover leave event is not always received for bezier edges
 	static QtGraphEdge* s_focusedBezierEdge;
 
+	QtGraphFocusHandler* m_focusHandler = nullptr;
+
 	const Edge* m_data;
 
-	QtGraphNode* m_owner;
-	QtGraphNode* m_target;
+	QtGraphNode* m_owner = nullptr;
+	QtGraphNode* m_target = nullptr;
 
-	QGraphicsItem* m_child;
+	QGraphicsItem* m_child = nullptr;
 
-	bool m_isActive;
-	bool m_isFocused;
+	bool m_isActive = false;
+	bool m_isFocused = false;
+	bool m_isCoFocused = false;
 
-	bool m_isHorizontal;
-	size_t m_weight;
+	bool m_isHorizontal = false;
+	size_t m_weight = 0;
 
 	TokenComponentAggregation::Direction m_direction;
 
-	bool m_isTrailEdge;
+	bool m_isTrailEdge = false;
 	std::vector<Vec4i> m_path;
 
-	bool m_useBezier;
-	bool m_isInteractive;
+	bool m_useBezier = false;
+	bool m_isInteractive = false;
 
 	Vec2i m_mousePos;
-	bool m_mouseMoved;
+	bool m_mouseMoved = false;
 };
 
 #endif // QT_GRAPH_EDGE_H

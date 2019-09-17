@@ -538,7 +538,7 @@ void QtGraphView::activateEdge(Id edgeId)
 			for (QtGraphEdge* edge : m_oldEdges)
 			{
 				edge->setIsActive(false);
-				edge->setIsFocused(false);
+				edge->setIsCoFocused(false);
 			}
 
 			for (QtGraphEdge* edge : m_oldEdges)
@@ -573,10 +573,12 @@ bool QtGraphView::hasFocus()
 
 void QtGraphView::focusNode(QtGraphNode* node)
 {
-	if (m_focusNode)
+	if (node == m_focusNode)
 	{
-		m_focusNode->setIsFocused(false);
+		return;
 	}
+
+	defocusGraph();
 
 	node->setIsFocused(true);
 	m_focusNode = node;
@@ -598,12 +600,34 @@ void QtGraphView::defocusNode(QtGraphNode* node)
 
 void QtGraphView::focusEdge(QtGraphEdge* edge)
 {
+	if (edge == m_focusEdge)
+	{
+		return;
+	}
 
+	defocusGraph();
+
+	edge->setIsFocused(true);
+	m_focusEdge = edge;
 }
 
 void QtGraphView::defocusEdge(QtGraphEdge* edge)
 {
+}
 
+void QtGraphView::defocusGraph()
+{
+	if (m_focusNode)
+	{
+		m_focusNode->setIsFocused(false);
+		m_focusNode = nullptr;
+	}
+
+	if (m_focusEdge)
+	{
+		m_focusEdge->setIsFocused(false);
+		m_focusEdge = nullptr;
+	}
 }
 
 void QtGraphView::updateScrollBars()
@@ -665,7 +689,7 @@ void QtGraphView::clickedInEmptySpace()
 			activeEdges.push_back(edge);
 		}
 
-		edge->setIsFocused(false);
+		edge->setIsCoFocused(false);
 	}
 
 	if (m_graph && m_graph->getTrailMode() != Graph::TRAIL_NONE)
@@ -1134,7 +1158,7 @@ QtGraphEdge* QtGraphView::createEdge(
 	if (owner != nullptr && target != nullptr)
 	{
 		QtGraphEdge* qtEdge = new QtGraphEdge(
-			owner, target, edge->data, edge->getWeight(), edge->active, interactive, edge->layoutHorizontal,
+			this, owner, target, edge->data, edge->getWeight(), edge->active, interactive, edge->layoutHorizontal,
 			edge->getDirection());
 
 		if (trailMode != Graph::TRAIL_NONE)

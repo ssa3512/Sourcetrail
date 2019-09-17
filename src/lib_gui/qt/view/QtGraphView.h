@@ -80,6 +80,8 @@ public:
 	void focusEdge(QtGraphEdge* edge) override;
 	void defocusEdge(QtGraphEdge* edge) override;
 
+	void defocusGraph();
+
 private slots:
 	void updateScrollBars();
 	void finishedTransition();
