@@ -6,13 +6,14 @@
 
 class QGraphicsPolygonItem;
 class QPainterPath;
+class QtGraphFocusHandler;
 
 class QtGraphNodeGroup
 	: public QtGraphNode
 {
 	Q_OBJECT
 public:
-	QtGraphNodeGroup(Id tokenId, const std::wstring& name, GroupType type, bool interactive);
+	QtGraphNodeGroup(QtGraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive);
 	virtual ~QtGraphNodeGroup();
 
 	// QtGraphNode implementation
@@ -25,10 +26,13 @@ public:
 	virtual QPainterPath shape() const;
 
 protected:
+	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
+	QtGraphFocusHandler* m_focusHandler;
+
 	Id m_tokenId;
 	GroupType m_type;
 	const bool m_interactive;

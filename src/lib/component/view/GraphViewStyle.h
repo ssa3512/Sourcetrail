@@ -128,7 +128,7 @@ public:
 	static NodeStyle getStyleOfBundleNode(bool isFocused);
 	static NodeStyle getStyleOfQualifier();
 	static NodeStyle getStyleOfTextNode(int fontSizeDiff);
-	static NodeStyle getStyleOfGroupNode(GroupType type, bool isFocused);
+	static NodeStyle getStyleOfGroupNode(GroupType type, bool isFocused, bool isCoFocused);
 
 	static EdgeStyle getStyleForEdgeType(
 		Edge::EdgeType type, bool isActive, bool isFocused, bool isTrailEdge, bool isAmbiguous);

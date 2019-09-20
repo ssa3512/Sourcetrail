@@ -1351,7 +1351,7 @@ std::vector<std::vector<QtGraphNode*>> QtGraphView::getSiblingsHierarchyRecursiv
 	std::vector<std::vector<QtGraphNode*>> siblingsList;
 
 	QtGraphNode* parent = node->getParent();
-	while (parent && !parent->isDataNode())
+	while (parent && !parent->isDataNode() && !parent->isGroupNode())
 	{
 		parent = parent->getParent();
 	}
@@ -1379,7 +1379,7 @@ void QtGraphView::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std
 {
 	for (QtGraphNode* node : nodes)
 	{
-		if (node->isDataNode() || node->isBundleNode())
+		if (node->isDataNode() || node->isBundleNode() || node->isGroupNode())
 		{
 			utility::append(siblings, utility::toVector(nodes));
 			return;
@@ -1446,7 +1446,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	}
 	else if (node->isGroupNode())
 	{
-		newNode = new QtGraphNodeGroup(node->tokenId, node->name, node->groupType, node->interactive);
+		newNode = new QtGraphNodeGroup(this, node->tokenId, node->name, node->groupType, node->interactive);
 	}
 	else
 	{

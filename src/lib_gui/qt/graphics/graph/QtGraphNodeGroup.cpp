@@ -10,13 +10,14 @@
 #include "MessageFocusIn.h"
 #include "MessageFocusOut.h"
 #include "MessageGraphNodeBundleSplit.h"
-
+#include "QtGraphFocusHandler.h"
 #include "QtRoundedRectItem.h"
 
 QtGraphNodeGroup::QtGraphNodeGroup(
-	Id tokenId, const std::wstring& name, GroupType type, bool interactive
+	QtGraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive
 )
-	: m_tokenId(tokenId)
+	: m_focusHandler(focusHandler)
+	, m_tokenId(tokenId)
 	, m_type(type)
 	, m_interactive(interactive)
 {
@@ -41,7 +42,7 @@ QtGraphNodeGroup::QtGraphNodeGroup(
 	m_background = new QGraphicsPolygonItem(this);
 	m_background->setZValue(-3.f);
 
-	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(type, false);
+	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(type, false, false);
 	GraphViewStyle::NodeMargins margins = GraphViewStyle::getMarginsOfGroupNode(type, true);
 
 	int width = style.textOffset.x * 2 + style.borderWidth + margins.charWidth * name.size();
@@ -94,7 +95,7 @@ void QtGraphNodeGroup::onClick()
 
 void QtGraphNodeGroup::updateStyle()
 {
-	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isFocused);
+	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isFocused, m_isCoFocused);
 
 	if (m_background)
 	{
@@ -115,8 +116,14 @@ QPainterPath QtGraphNodeGroup::shape() const
 	return m_path;
 }
 
+void QtGraphNodeGroup::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
+{
+	m_focusHandler->focusNode(this);
+}
+
 void QtGraphNodeGroup::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
+	m_focusHandler->defocusNode(this);
 	if (m_type == GroupType::FILE || m_type == GroupType::NAMESPACE)
 	{
 		MessageFocusOut({ m_tokenId }).dispatch();

@@ -570,7 +570,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfTextNode(int fontSizeDiff)
 	return style;
 }
 
-GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bool isFocused)
+GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bool isFocused, bool isCoFocused)
 {
 	NodeStyle style;
 
@@ -594,7 +594,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bo
 	{
 		colorType += "inheritance";
 
-		if (isFocused)
+		if (isCoFocused)
 		{
 			style.borderWidth = 3;
 		}
@@ -604,7 +604,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bo
 		return style;
 	}
 
-	style.color = getNodeColor(colorType, isFocused);
+	style.color = getNodeColor(colorType, isCoFocused);
 
 	style.fontName = getFontNameOfGroupNode();
 	style.fontSize = getFontSizeOfGroupNode();
@@ -612,6 +612,11 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bo
 
 	style.textOffset.x = 12;
 	style.textOffset.y = 5;
+
+	if (isFocused)
+	{
+		style.color.border = "red";
+	}
 
 	return style;
 }
