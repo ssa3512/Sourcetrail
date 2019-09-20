@@ -1238,8 +1238,8 @@ QtGraphEdge* QtGraphView::findNextEdge(QPointF pos, Direction direction, QtGraph
 			float distXMult = vertical ? 2 : 1;
 			float distYMult = vertical ? 1 : 2;
 
-			// only use one dimension for distance calculation for bezier edges because of overlaps
-			if (edge->isBezierEdge())
+			// only use one dimension for distance calculation in aggregation graphs to not miss certain edges
+			if (edge->isBezierEdge() && m_oldNodes.size() == 2)
 			{
 				distXMult = vertical ? 0 : 1;
 				distYMult = vertical ? 1 : 0;
