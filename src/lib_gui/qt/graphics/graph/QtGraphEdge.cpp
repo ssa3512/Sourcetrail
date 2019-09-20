@@ -166,6 +166,7 @@ void QtGraphEdge::updateLine()
 		bool showArrow = m_direction != TokenComponentAggregation::DIRECTION_NONE;
 
 		QtLineItemBezier* bezier = new QtLineItemBezier(this);
+		m_child = bezier;
 		bezier->updateLine(ownerRect, targetRect, ownerParentRect, targetParentRect, style, m_weight, showArrow);
 		bezier->setRoute(route);
 
@@ -534,6 +535,11 @@ void QtGraphEdge::setIsTrailEdge(std::vector<Vec4i> path, bool horizontal)
 	m_isHorizontal = horizontal;
 }
 
+bool QtGraphEdge::isBezierEdge() const
+{
+	return m_useBezier;
+}
+
 void QtGraphEdge::setUseBezier(bool useBezier)
 {
 	m_useBezier = useBezier;
@@ -548,4 +554,14 @@ void QtGraphEdge::clearPath()
 bool QtGraphEdge::isAmbiguous() const
 {
 	return m_data && m_data->getComponent<TokenComponentIsAmbiguous>();
+}
+
+QRectF QtGraphEdge::getBoundingRect() const
+{
+	if (m_child)
+	{
+		return m_child->sceneBoundingRect();
+	}
+
+	return QRectF();
 }

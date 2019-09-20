@@ -577,7 +577,7 @@ void QtGraphView::focusNext(Direction direction, bool navigateEdges)
 	{
 		if (navigateEdges)
 		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusNode, direction);
+			QtGraphEdge* nextEdge = findNextEdge(m_focusNode->sceneBoundingRect().center(), direction);
 			if (nextEdge)
 			{
 				focusEdge(nextEdge);
@@ -594,9 +594,9 @@ void QtGraphView::focusNext(Direction direction, bool navigateEdges)
 	}
 	else if (m_focusEdge)
 	{
-		if (m_focusEdge->isHorizontal() == (direction == Direction::UP || direction == Direction::DOWN))
+		if (navigateEdges)
 		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusEdge, direction);
+			QtGraphEdge* nextEdge = findNextEdge(m_focusEdge->getBoundingRect().center(), direction, m_focusEdge);
 			if (nextEdge)
 			{
 				focusEdge(nextEdge);
@@ -1196,66 +1196,65 @@ QtGraphNode* QtGraphView::findNextNode(QtGraphEdge* edge, Direction direction)
 	return nullptr;
 }
 
-QtGraphEdge* QtGraphView::findNextEdge(QtGraphNode* node, Direction direction)
+QtGraphEdge* QtGraphView::findNextEdge(QPointF pos, Direction direction, QtGraphEdge* previousEdge)
 {
-	std::vector<QtGraphEdge*> edges = getGraphEdgesSorted(node, direction);
-	if (edges.size())
+	QtGraphEdge* closestEdge = nullptr;
+	QRectF previousEdgeRect;
+	if (previousEdge)
 	{
-		return edges.front();
-	}
-	return nullptr;
-}
-
-QtGraphEdge* QtGraphView::findNextEdge(QtGraphEdge* edge, Direction direction)
-{
-	QtGraphNode* focusNode = nullptr;
-	QtGraphNode* otherNode = nullptr;
-
-	if (edge->getOwner()->hasActiveChild())
-	{
-		focusNode = edge->getOwner();
-		otherNode = edge->getTarget();
-	}
-	else if (edge->getTarget()->hasActiveChild())
-	{
-		focusNode = edge->getTarget();
-		otherNode = edge->getOwner();
-	}
-	else
-	{
-		return nullptr;
+		previousEdgeRect = previousEdge->getBoundingRect();
 	}
 
-	Direction focusDirection;
-	if (direction == Direction::UP || direction == Direction::DOWN)
-	{
-		focusDirection = focusNode->getPosition().x() < otherNode->getPosition().x() ? Direction::RIGHT : Direction::LEFT;
-	}
-	else
-	{
-		focusDirection = focusNode->getPosition().y() < otherNode->getPosition().y() ? Direction::DOWN : Direction::UP;
-	}
+	float minDist = 0;
 
-	std::vector<QtGraphEdge*> edges = getGraphEdgesSorted(focusNode, focusDirection);
-	std::vector<QtGraphEdge*>::const_iterator it = std::find(edges.begin(), edges.end(), edge);
-	if (it != edges.end())
+	for (QtGraphEdge* edge : m_oldEdges)
 	{
-		if (direction == Direction::DOWN || direction == Direction::RIGHT)
+		if (edge == previousEdge)
 		{
-			it = std::next(it);
-			if (it != edges.end())
+			continue;
+		}
+
+		QRectF edgeRect = edge->getBoundingRect();
+		QPointF edgePos = edgeRect.center();
+
+		bool top = edgePos.y() < pos.y();
+		bool bottom = edgePos.y() > pos.y();
+		bool left = edgePos.x() < pos.x();
+		bool right = edgePos.x() > pos.x();
+
+		bool isDir =
+			(direction == Direction::UP && top) ||
+			(direction == Direction::DOWN && bottom) ||
+			(direction == Direction::LEFT && left) ||
+			(direction == Direction::RIGHT && right);
+
+		if (isDir)
+		{
+			float distX = std::abs(pos.x() - edgePos.x());
+			float distY = std::abs(pos.y() - edgePos.y());
+
+			bool vertical = (direction == Direction::UP || direction == Direction::DOWN);
+
+			float distXMult = vertical ? 2 : 1;
+			float distYMult = vertical ? 1 : 2;
+
+			// only use one dimension for distance calculation for bezier edges because of overlaps
+			if (edge->isBezierEdge())
 			{
-				return *it;
+				distXMult = vertical ? 0 : 1;
+				distYMult = vertical ? 1 : 0;
+			}
+
+			float dist = distX * distXMult + distY * distYMult;
+			if (!minDist || dist < minDist)
+			{
+				minDist = dist;
+				closestEdge = edge;
 			}
 		}
-		else if (it != edges.begin())
-		{
-			it = std::prev(it);
-			return *it;
-		}
 	}
 
-	return nullptr;
+	return closestEdge;
 }
 
 QtGraphNode* QtGraphView::findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first)
@@ -1390,48 +1389,6 @@ void QtGraphView::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std
 			addSiblingsRecursive(node->getSubNodes(), siblings);
 		}
 	}
-}
-
-std::vector<QtGraphEdge*> QtGraphView::getGraphEdgesSorted(const QtGraphNode* node, Direction direction) const
-{
-	std::map<std::pair<int, int>, QtGraphEdge*> edgesSorted;
-
-	Vec2i p = node->getPosition();
-
-	for (QtGraphEdge* edge : m_oldEdges)
-	{
-		QtGraphNode* other = edge->getOwner();
-		if (node == other)
-		{
-			other = edge->getTarget();
-		}
-		else if (node != edge->getTarget())
-		{
-			continue;
-		}
-
-		bool h = edge->isHorizontal();
-
-		Vec2i pos = other->getPosition();
-		Vec2i parentPos = other->getLastNonGroupParent()->getPosition();
-
-		if ((!h && direction == Direction::UP && pos.y() < p.y()) ||
-			(!h && direction == Direction::DOWN && pos.y() > p.y()) ||
-			(h && direction == Direction::LEFT && pos.x() < p.x()) ||
-			(h && direction == Direction::RIGHT && pos.x() > p.x()))
-		{
-			edgesSorted.emplace(std::make_pair(parentPos.x(), pos.y()), edge);
-		}
-	}
-
-	std::vector<QtGraphEdge*> edges;
-
-	for (auto p : edgesSorted)
-	{
-		edges.push_back(p.second);
-	}
-
-	return edges;
 }
 
 QtGraphNode* QtGraphView::findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId)

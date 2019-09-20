@@ -65,10 +65,13 @@ public:
 	bool isTrailEdge() const;
 	void setIsTrailEdge(std::vector<Vec4i> path, bool horizontal);
 
+	bool isBezierEdge() const;
 	void setUseBezier(bool useBezier);
 	void clearPath();
 
 	bool isAmbiguous() const;
+
+	QRectF getBoundingRect() const;
 
 protected:
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent* event);
