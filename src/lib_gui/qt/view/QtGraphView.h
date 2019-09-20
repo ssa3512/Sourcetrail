@@ -171,6 +171,7 @@ private:
 
 	QtGraphNode* m_focusNode = nullptr;
 	QtGraphEdge* m_focusEdge = nullptr;
+	Id m_lastFocusId = 0;
 
 	bool m_centerActiveNode;
 	bool m_scrollToTop;

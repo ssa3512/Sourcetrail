@@ -14,7 +14,6 @@
 #include "QtGraphEdge.h"
 #include "QtGraphNodeExpandToggle.h"
 #include "MessageCodeShowDefinition.h"
-#include "MessageGraphNodeExpand.h"
 #include "MessageGraphNodeHide.h"
 #include "MessageGraphNodeMove.h"
 #include "ResourcePaths.h"
@@ -411,21 +410,23 @@ void QtGraphNode::onHide()
 	}
 }
 
-void QtGraphNode::onCollapseExpand()
+Id QtGraphNode::onCollapseExpand()
 {
 	for (auto subNode : getSubNodes())
 	{
 		if (subNode->isExpandToggleNode())
 		{
-			MessageGraphNodeExpand(getTokenId(), !dynamic_cast<QtGraphNodeExpandToggle*>(subNode)->isExpanded()).dispatch();
-			return;
+			subNode->onClick();
+			return getTokenId();
 		}
 	}
 
 	if (getParent())
 	{
-		getParent()->onCollapseExpand();
+		return getParent()->onCollapseExpand();
 	}
+
+	return 0;
 }
 
 void QtGraphNode::onShowDefinition(bool inIDE)

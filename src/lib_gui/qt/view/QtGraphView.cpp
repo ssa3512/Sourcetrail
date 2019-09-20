@@ -341,9 +341,9 @@ void QtGraphView::rebuildGraph(
 		m_nodes.clear();
 		m_activeNodes.clear();
 		m_oldActiveNode = nullptr;
+		m_virtualNodeRects.clear();
 		m_focusNode = nullptr;
 		m_focusEdge = nullptr;
-		m_virtualNodeRects.clear();
 
 		for (unsigned int i = 0; i < nodes.size(); i++)
 		{
@@ -410,6 +410,7 @@ void QtGraphView::clear()
 		m_oldActiveNode = nullptr;
 		m_focusNode = nullptr;
 		m_focusEdge = nullptr;
+		m_lastFocusId = 0;
 		m_activeNodes.clear();
 
 		for (QtGraphNode* node : m_oldNodes)
@@ -611,6 +612,26 @@ void QtGraphView::focusNext(Direction direction, bool navigateEdges)
 			}
 		}
 	}
+
+	if (m_focusNode)
+	{
+		QtGraphicsView* view = getView();
+
+		Vec4i r = m_focusNode->getBoundingRect();
+		QRectF rect(r.x(), r.y(), r.z() - r.x(), r.w() - r.y());
+
+		if (rect.width() > view->width() - 100)
+		{
+			rect.setWidth(view->width() - 100);
+		}
+
+		if (rect.height() > view->height() - 100)
+		{
+			rect.setHeight(view->height() - 100);
+		}
+
+		view->ensureVisibleAnimated(rect, 30, 30);
+	}
 }
 
 void QtGraphView::focusNode(QtGraphNode* node)
@@ -688,7 +709,7 @@ void QtGraphView::expandFocus()
 {
 	if (m_focusNode)
 	{
-		m_focusNode->onCollapseExpand();
+		m_lastFocusId = m_focusNode->onCollapseExpand();
 	}
 	else if (m_focusEdge && m_focusEdge->isExpandable())
 	{
@@ -1069,6 +1090,17 @@ void QtGraphView::switchToNewGraphData()
 		}
 		m_activeNodes.clear();
 	}
+
+	QtGraphNode* nodeToFocus = m_oldActiveNode;
+	if (m_lastFocusId)
+	{
+		nodeToFocus = findNodeRecursive(m_oldNodes, m_lastFocusId);
+	}
+	if (nodeToFocus)
+	{
+		focusNode(nodeToFocus);
+	}
+	m_lastFocusId = 0;
 
 	// Repaint to make sure all artifacts are removed
 	view->update();

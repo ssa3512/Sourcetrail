@@ -99,7 +99,7 @@ public:
 	virtual void onMiddleClick();
 
 	void onHide();
-	void onCollapseExpand();
+	Id onCollapseExpand();
 	void onShowDefinition(bool inIDE);
 
 	virtual void moved(const Vec2i& oldPosition);
