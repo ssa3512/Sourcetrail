@@ -124,13 +124,14 @@ private:
 	QtGraphNode* findNextNode(QtGraphNode* node, Direction direction);
 	QtGraphNode* findNextNode(QtGraphEdge* edge, Direction direction);
 	QtGraphEdge* findNextEdge(QtGraphNode* node, Direction direction);
-	QtGraphEdge* findNextEdge(QtGraphEdge* Edge, Direction direction);
+	QtGraphEdge* findNextEdge(QtGraphEdge* edge, Direction direction);
 
 	QtGraphNode* findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first);
 
 	QtGraphNode* findSibling(const QtGraphNode* node, Direction direction);
 	std::vector<std::vector<QtGraphNode*>> getSiblingsHierarchyRecursive(const QtGraphNode* node);
 	void addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings);
+	std::vector<QtGraphEdge*> getGraphEdgesSorted(const QtGraphNode* node, Direction direction) const;
 
 	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId);
 
