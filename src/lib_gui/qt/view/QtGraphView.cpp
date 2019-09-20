@@ -470,7 +470,7 @@ void QtGraphView::defocusTokenIds(const std::vector<Id>& defocusedTokenIds)
 		for (const Id& tokenId : defocusedTokenIds)
 		{
 			QtGraphNode* node = findNodeRecursive(m_oldNodes, tokenId);
-			if (node && (node->isDataNode() || node->isGroupNode()))
+			if (node && node->isFocusable())
 			{
 				node->focusOut();
 				continue;
@@ -643,14 +643,17 @@ void QtGraphView::focusNode(QtGraphNode* node)
 
 	defocusGraph();
 
-	node->setIsFocused(true);
-	m_focusNode = node;
+	if (node->isFocusable())
+	{
+		node->setIsFocused(true);
+		m_focusNode = node;
+	}
 }
 
 void QtGraphView::defocusNode(QtGraphNode* node)
 {
 	QtGraphNode* parent = node->getParent();
-	while (parent && !parent->isDataNode())
+	while (parent && !parent->isFocusable())
 	{
 		parent = parent->getParent();
 	}
@@ -670,8 +673,11 @@ void QtGraphView::focusEdge(QtGraphEdge* edge)
 
 	defocusGraph();
 
-	edge->setIsFocused(true);
-	m_focusEdge = edge;
+	if (edge->isFocusable())
+	{
+		edge->setIsFocused(true);
+		m_focusEdge = edge;
+	}
 }
 
 void QtGraphView::defocusEdge(QtGraphEdge* edge)
@@ -1161,7 +1167,7 @@ QtGraphNode* QtGraphView::findNextNode(QtGraphNode* node, Direction direction)
 			}
 
 			QtGraphNode* parent = node->getParent();
-			while (parent && !parent->isDataNode())
+			while (parent && !parent->isFocusable())
 			{
 				parent = parent->getParent();
 			}
@@ -1241,7 +1247,7 @@ QtGraphEdge* QtGraphView::findNextEdge(QPointF pos, Direction direction, QtGraph
 
 	for (QtGraphEdge* edge : m_oldEdges)
 	{
-		if (edge == previousEdge)
+		if (edge == previousEdge || !edge->isFocusable())
 		{
 			continue;
 		}
@@ -1295,7 +1301,7 @@ QtGraphNode* QtGraphView::findChildNodeRecursive(const std::list<QtGraphNode*>& 
 
 	for (QtGraphNode* node : nodes)
 	{
-		if (node->isDataNode() || node->isBundleNode())
+		if (node->isFocusable())
 		{
 			result = node;
 			if (first)
@@ -1329,7 +1335,7 @@ QtGraphNode* QtGraphView::findSibling(const QtGraphNode* node, Direction directi
 	{
 		for (QtGraphNode* sibling : siblings)
 		{
-			if (sibling == node)
+			if (sibling == node || !sibling->isFocusable())
 			{
 				continue;
 			}
@@ -1411,10 +1417,9 @@ void QtGraphView::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std
 {
 	for (QtGraphNode* node : nodes)
 	{
-		if (node->isDataNode() || node->isBundleNode() || node->isGroupNode())
+		if (node->isFocusable())
 		{
-			utility::append(siblings, utility::toVector(nodes));
-			return;
+			siblings.push_back(node);
 		}
 		else
 		{
@@ -1466,7 +1471,8 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	}
 	else if (node->isBundleNode())
 	{
-		newNode = new QtGraphNodeBundle(this, node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name);
+		newNode = new QtGraphNodeBundle(
+			this, node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name, interactive);
 	}
 	else if (node->isQualifierNode())
 	{
@@ -1478,7 +1484,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	}
 	else if (node->isGroupNode())
 	{
-		newNode = new QtGraphNodeGroup(this, node->tokenId, node->name, node->groupType, node->interactive);
+		newNode = new QtGraphNodeGroup(this, node->tokenId, node->name, node->groupType, node->interactive && interactive);
 	}
 	else
 	{

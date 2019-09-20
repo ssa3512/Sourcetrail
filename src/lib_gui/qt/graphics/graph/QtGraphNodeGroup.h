@@ -35,7 +35,6 @@ private:
 
 	Id m_tokenId;
 	GroupType m_type;
-	const bool m_interactive;
 
 	QGraphicsPolygonItem* m_background = nullptr;
 	mutable QPainterPath m_path;

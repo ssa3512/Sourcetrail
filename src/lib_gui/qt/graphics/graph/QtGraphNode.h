@@ -66,6 +66,8 @@ public:
 	void setMultipleActive(bool multipleActive);
 	bool hasActiveChild() const;
 
+	bool isFocusable() const;
+
 	std::wstring getName() const;
 	void setName(const std::wstring& name);
 
@@ -137,6 +139,7 @@ protected:
 	bool m_multipleActive = false;
 	bool m_isFocused = false;
 	bool m_isCoFocused = false;
+	bool m_isInteractive = false;
 
 private:
 	std::list<std::shared_ptr<QtGraphNodeComponent>> m_components;

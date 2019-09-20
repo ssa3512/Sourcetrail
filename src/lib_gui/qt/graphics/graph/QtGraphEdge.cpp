@@ -309,6 +309,11 @@ void QtGraphEdge::setIsCoFocused(bool isCoFocused)
 	}
 }
 
+bool QtGraphEdge::isFocusable() const
+{
+	return m_isInteractive;
+}
+
 void QtGraphEdge::onClick()
 {
 	if (isExpandable())

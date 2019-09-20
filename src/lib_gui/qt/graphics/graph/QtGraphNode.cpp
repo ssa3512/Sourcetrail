@@ -209,6 +209,11 @@ bool QtGraphNode::hasActiveChild() const
 	return false;
 }
 
+bool QtGraphNode::isFocusable() const
+{
+	return m_isInteractive && (isDataNode() || isGroupNode() || isBundleNode());
+}
+
 std::wstring QtGraphNode::getName() const
 {
 	return m_text->text().toStdWString();

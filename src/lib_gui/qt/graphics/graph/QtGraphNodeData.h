@@ -36,7 +36,6 @@ private:
 	const Node* m_data;
 	bool m_childVisible;
 	bool m_hasQualifier;
-	bool m_isInteractive;
 };
 
 #endif // QT_GRAPH_NODE_DATA_H

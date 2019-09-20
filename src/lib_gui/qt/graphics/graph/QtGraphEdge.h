@@ -51,6 +51,8 @@ public:
 	void setIsFocused(bool isFocused);
 	void setIsCoFocused(bool isCoFocused);
 
+	bool isFocusable() const;
+
 	void onClick();
 	void onHide();
 

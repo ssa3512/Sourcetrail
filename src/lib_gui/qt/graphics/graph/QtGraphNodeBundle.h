@@ -12,7 +12,8 @@ class QtGraphNodeBundle
 {
 	Q_OBJECT
 public:
-	QtGraphNodeBundle(QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name);
+	QtGraphNodeBundle(
+		QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name, bool interactive);
 	virtual ~QtGraphNodeBundle();
 
 	// QtGraphNode implementation

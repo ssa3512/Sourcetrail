@@ -24,8 +24,8 @@ QtGraphNodeData::QtGraphNodeData(
 	, m_data(data)
 	, m_childVisible(childVisible)
 	, m_hasQualifier(hasQualifier)
-	, m_isInteractive(isInteractive)
 {
+	m_isInteractive = isInteractive;
 	this->setAcceptHoverEvents(true);
 	this->setName(name);
 }

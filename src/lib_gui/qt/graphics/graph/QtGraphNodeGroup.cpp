@@ -19,8 +19,8 @@ QtGraphNodeGroup::QtGraphNodeGroup(
 	: m_focusHandler(focusHandler)
 	, m_tokenId(tokenId)
 	, m_type(type)
-	, m_interactive(interactive)
 {
+	m_isInteractive = interactive;
 	if (interactive)
 	{
 		setAcceptHoverEvents(true);
@@ -78,7 +78,7 @@ Id QtGraphNodeGroup::getTokenId() const
 
 void QtGraphNodeGroup::onClick()
 {
-	if (!m_interactive || !m_isFocused)
+	if (!m_isInteractive || !m_isFocused)
 	{
 		return;
 	}
@@ -138,7 +138,7 @@ void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 {
 	if (!m_background || m_background->contains(event->pos()))
 	{
-		if (!m_isFocused)
+		if (!m_isCoFocused)
 		{
 			if (m_type == GroupType::FILE || m_type == GroupType::NAMESPACE)
 			{
@@ -150,7 +150,7 @@ void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 			}
 		}
 	}
-	else if (m_isFocused)
+	else if (m_isCoFocused)
 	{
 		hoverLeaveEvent(nullptr);
 	}

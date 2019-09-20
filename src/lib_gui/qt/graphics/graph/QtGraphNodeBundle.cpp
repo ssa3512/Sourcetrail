@@ -8,12 +8,16 @@
 #include "QtCountCircleItem.h"
 #include "QtGraphFocusHandler.h"
 
-QtGraphNodeBundle::QtGraphNodeBundle(QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name)
+QtGraphNodeBundle::QtGraphNodeBundle(
+	QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name, bool interactive
+)
 	: QtGraphNode()
 	, m_focusHandler(focusHandler)
 	, m_tokenId(tokenId)
 	, m_type(type)
 {
+	m_isInteractive = interactive;
+
 	this->setName(name);
 
 	m_circle = new QtCountCircleItem(this);
