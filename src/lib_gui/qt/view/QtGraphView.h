@@ -71,7 +71,8 @@ public:
 	void focus() override;
 	void defocus() override;
 	bool hasFocus() override;
-	bool m_hasFocus = false;
+
+	void focusInitialNode();
 
 	// QtGraphFocusHandler implementation
 	void focusNext(Direction direction, bool navigateEdges) override;

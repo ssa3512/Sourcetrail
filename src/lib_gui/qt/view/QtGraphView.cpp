@@ -558,18 +558,61 @@ void QtGraphView::activateEdge(Id edgeId)
 void QtGraphView::focus()
 {
 	std::cout << "focus graph" << std::endl;
-	m_hasFocus = true;
+	getView()->setFocus();
+
+	if (m_focusNode)
+	{
+		m_focusNode->setIsFocused(true);
+	}
+	else if (m_focusEdge)
+	{
+		m_focusEdge->setIsFocused(true);
+	}
+	else
+	{
+		focusInitialNode();
+	}
 }
 
 void QtGraphView::defocus()
 {
 	std::cout << "defocus graph" << std::endl;
-	m_hasFocus = false;
+	getView()->clearFocus();
+
+	if (m_focusNode)
+	{
+		m_focusNode->setIsFocused(false);
+	}
+	else if (m_focusEdge)
+	{
+		m_focusEdge->setIsFocused(false);
+	}
 }
 
 bool QtGraphView::hasFocus()
 {
-	return m_hasFocus;
+	return getView()->hasFocus();
+}
+
+void QtGraphView::focusInitialNode()
+{
+	QtGraphNode* nodeToFocus = m_oldActiveNode;
+
+	if (m_lastFocusId)
+	{
+		nodeToFocus = findNodeRecursive(m_oldNodes, m_lastFocusId);
+		m_lastFocusId = 0;
+	}
+
+	if (!nodeToFocus)
+	{
+		nodeToFocus = findChildNodeRecursive(m_oldNodes, true);
+	}
+
+	if (nodeToFocus)
+	{
+		focusNode(nodeToFocus);
+	}
 }
 
 void QtGraphView::focusNext(Direction direction, bool navigateEdges)
@@ -630,12 +673,14 @@ void QtGraphView::focusNext(Direction direction, bool navigateEdges)
 			rect.setHeight(view->height() - 100);
 		}
 
-		view->ensureVisibleAnimated(rect, 30, 30);
+		view->ensureVisibleAnimated(rect, 100, 100);
 	}
 }
 
 void QtGraphView::focusNode(QtGraphNode* node)
 {
+	getView()->setFocus();
+
 	if (node == m_focusNode)
 	{
 		return;
@@ -666,6 +711,8 @@ void QtGraphView::defocusNode(QtGraphNode* node)
 
 void QtGraphView::focusEdge(QtGraphEdge* edge)
 {
+	getView()->setFocus();
+
 	if (edge == m_focusEdge)
 	{
 		return;
@@ -717,7 +764,7 @@ void QtGraphView::expandFocus()
 	{
 		m_lastFocusId = m_focusNode->onCollapseExpand();
 	}
-	else if (m_focusEdge && m_focusEdge->isExpandable())
+	else if (m_focusEdge)
 	{
 		m_focusEdge->onClick();
 	}
@@ -1097,16 +1144,10 @@ void QtGraphView::switchToNewGraphData()
 		m_activeNodes.clear();
 	}
 
-	QtGraphNode* nodeToFocus = m_oldActiveNode;
-	if (m_lastFocusId)
+	if (hasFocus())
 	{
-		nodeToFocus = findNodeRecursive(m_oldNodes, m_lastFocusId);
+		focusInitialNode();
 	}
-	if (nodeToFocus)
-	{
-		focusNode(nodeToFocus);
-	}
-	m_lastFocusId = 0;
 
 	// Repaint to make sure all artifacts are removed
 	view->update();
