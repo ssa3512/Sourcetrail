@@ -1,5 +1,5 @@
-#ifndef QT_GRAPH_FOCUS_HANDLER_H
-#define QT_GRAPH_FOCUS_HANDLER_H
+#ifndef GRAPH_FOCUS_HANDLER_H
+#define GRAPH_FOCUS_HANDLER_H
 
 #include <list>
 #include <vector>
@@ -10,7 +10,7 @@ class QtGraphEdge;
 class QtGraphNode;
 class QPointF;
 
-class QtGraphFocusClient
+class GraphFocusClient
 {
 public:
 	virtual void focusView() = 0;
@@ -23,7 +23,7 @@ public:
 	virtual void ensureNodeVisible(QtGraphNode* node) = 0;
 };
 
-class QtGraphFocusHandler
+class GraphFocusHandler
 {
 public:
 	enum class Direction
@@ -34,7 +34,7 @@ public:
 		RIGHT
 	};
 
-	QtGraphFocusHandler(QtGraphFocusClient* client);
+	GraphFocusHandler(GraphFocusClient* client);
 
 	void clear();
 
@@ -68,11 +68,11 @@ private:
 	std::vector<std::vector<QtGraphNode*>> getSiblingsHierarchyRecursive(const QtGraphNode* node);
 	void addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings);
 
-	QtGraphFocusClient* const m_client;
+	GraphFocusClient* const m_client;
 
 	QtGraphNode* m_focusNode = nullptr;
 	QtGraphEdge* m_focusEdge = nullptr;
 	Id m_lastFocusId = 0;
 };
 
-#endif // QT_GRAPH_FOCUS_HANDLER_H
+#endif // GRAPH_FOCUS_HANDLER_H

@@ -5,11 +5,11 @@
 #include <QGraphicsItemGroup>
 
 #include "Edge.h"
+#include "GraphFocusHandler.h"
 #include "GraphViewStyle.h"
 #include "QtLineItemAngled.h"
 #include "QtLineItemBezier.h"
 #include "QtLineItemStraight.h"
-#include "QtGraphFocusHandler.h"
 #include "QtGraphNode.h"
 #include "MessageActivateEdge.h"
 #include "MessageActivateTrailEdge.h"
@@ -36,7 +36,7 @@ void QtGraphEdge::unfocusBezierEdge()
 }
 
 QtGraphEdge::QtGraphEdge(
-	QtGraphFocusHandler* focusHandler,
+	GraphFocusHandler* focusHandler,
 	QtGraphNode* owner,
 	QtGraphNode* target,
 	const Edge* data,

@@ -7,10 +7,10 @@
 
 #include "types.h"
 
+class GraphFocusHandler;
 class QPushButton;
 class QTimer;
 class QtGraphEdge;
-class QtGraphFocusHandler;
 class QtGraphNode;
 class QtSelfRefreshIconButton;
 
@@ -20,7 +20,7 @@ class QtGraphicsView
 	Q_OBJECT
 
 public:
-	QtGraphicsView(QtGraphFocusHandler* focusHandler, QWidget* parent);
+	QtGraphicsView(GraphFocusHandler* focusHandler, QWidget* parent);
 
 	float getZoomFactor() const;
 	void setAppZoomFactor(float appZoomFactor);
@@ -84,7 +84,7 @@ private:
 	void setZoomFactor(float zoomFactor);
 	void updateTransform();
 
-	QtGraphFocusHandler* m_focusHandler;
+	GraphFocusHandler* m_focusHandler;
 
 	QPoint m_last;
 

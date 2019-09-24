@@ -11,7 +11,7 @@
 #include "TokenComponentAggregation.h"
 
 class Edge;
-class QtGraphFocusHandler;
+class GraphFocusHandler;
 class QtGraphNode;
 
 class QtGraphEdge
@@ -25,7 +25,7 @@ public:
 	static void unfocusBezierEdge();
 
 	QtGraphEdge(
-		QtGraphFocusHandler* focusHandler,
+		GraphFocusHandler* focusHandler,
 		QtGraphNode* owner,
 		QtGraphNode* target,
 		const Edge* data,
@@ -90,7 +90,7 @@ private:
 	// used to unfocus recent edge, because hover leave event is not always received for bezier edges
 	static QtGraphEdge* s_focusedBezierEdge;
 
-	QtGraphFocusHandler* m_focusHandler = nullptr;
+	GraphFocusHandler* m_focusHandler = nullptr;
 
 	const Edge* m_data;
 

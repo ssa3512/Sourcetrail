@@ -3,15 +3,15 @@
 
 #include "QtGraphNode.h"
 
+class GraphFocusHandler;
 class FilePath;
-class QtGraphFocusHandler;
 
 class QtGraphNodeData
 	: public QtGraphNode
 {
 	Q_OBJECT
 public:
-	QtGraphNodeData(QtGraphFocusHandler* focusHandler, const Node* data, const std::wstring& name, bool childVisible, bool hasQualifier, bool isInteractive);
+	QtGraphNodeData(GraphFocusHandler* focusHandler, const Node* data, const std::wstring& name, bool childVisible, bool hasQualifier, bool isInteractive);
 	virtual ~QtGraphNodeData();
 
 	const Node* getData() const;
@@ -31,7 +31,7 @@ protected:
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	QtGraphFocusHandler* m_focusHandler;
+	GraphFocusHandler* m_focusHandler;
 
 	const Node* m_data;
 	bool m_childVisible;

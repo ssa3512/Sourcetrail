@@ -7,13 +7,13 @@
 #include "MessageFocusOut.h"
 #include "MessageTabOpenWith.h"
 #include "MessageTooltipShow.h"
-#include "QtGraphFocusHandler.h"
+#include "GraphFocusHandler.h"
 #include "ResourcePaths.h"
 
 #include "TokenComponentFilePath.h"
 
 QtGraphNodeData::QtGraphNodeData(
-	QtGraphFocusHandler* focusHandler,
+	GraphFocusHandler* focusHandler,
 	const Node* data,
 	const std::wstring& name,
 	bool childVisible,

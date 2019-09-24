@@ -10,11 +10,11 @@
 #include "MessageFocusIn.h"
 #include "MessageFocusOut.h"
 #include "MessageGraphNodeBundleSplit.h"
-#include "QtGraphFocusHandler.h"
+#include "GraphFocusHandler.h"
 #include "QtRoundedRectItem.h"
 
 QtGraphNodeGroup::QtGraphNodeGroup(
-	QtGraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive
+	GraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive
 )
 	: m_focusHandler(focusHandler)
 	, m_tokenId(tokenId)

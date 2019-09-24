@@ -4,16 +4,16 @@
 #include "GroupType.h"
 #include "QtGraphNode.h"
 
+class GraphFocusHandler;
 class QGraphicsPolygonItem;
 class QPainterPath;
-class QtGraphFocusHandler;
 
 class QtGraphNodeGroup
 	: public QtGraphNode
 {
 	Q_OBJECT
 public:
-	QtGraphNodeGroup(QtGraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive);
+	QtGraphNodeGroup(GraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive);
 	virtual ~QtGraphNodeGroup();
 
 	// QtGraphNode implementation
@@ -31,7 +31,7 @@ protected:
 	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	QtGraphFocusHandler* m_focusHandler;
+	GraphFocusHandler* m_focusHandler;
 
 	Id m_tokenId;
 	GroupType m_type;

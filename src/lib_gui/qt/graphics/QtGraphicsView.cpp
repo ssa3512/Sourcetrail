@@ -12,6 +12,7 @@
 #include <QSvgGenerator>
 
 #include "ApplicationSettings.h"
+#include "GraphFocusHandler.h"
 #include "MessageActivateLegend.h"
 #include "MessageBookmarkCreate.h"
 #include "MessageCodeShowDefinition.h"
@@ -21,7 +22,6 @@
 #include "QtContextMenu.h"
 #include "QtFileDialog.h"
 #include "QtGraphEdge.h"
-#include "QtGraphFocusHandler.h"
 #include "QtGraphNode.h"
 #include "QtGraphNodeBundle.h"
 #include "QtGraphNodeData.h"
@@ -31,7 +31,7 @@
 #include "utilityApp.h"
 #include "utilityQt.h"
 
-QtGraphicsView::QtGraphicsView(QtGraphFocusHandler* focusHandler, QWidget* parent)
+QtGraphicsView::QtGraphicsView(GraphFocusHandler* focusHandler, QWidget* parent)
 	: QGraphicsView(parent)
 	, m_focusHandler(focusHandler)
 	, m_zoomFactor(1.0f)
@@ -301,25 +301,25 @@ void QtGraphicsView::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_Up:
 		case Qt::Key_K:
 		case Qt::Key_W:
-			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::UP, m_shift);
+			m_focusHandler->focusNext(GraphFocusHandler::Direction::UP, m_shift);
 			break;
 
 		case Qt::Key_Down:
 		case Qt::Key_J:
 		case Qt::Key_S:
-			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::DOWN, m_shift);
+			m_focusHandler->focusNext(GraphFocusHandler::Direction::DOWN, m_shift);
 			break;
 
 		case Qt::Key_Left:
 		case Qt::Key_H:
 		case Qt::Key_A:
-			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::LEFT, m_shift);
+			m_focusHandler->focusNext(GraphFocusHandler::Direction::LEFT, m_shift);
 			break;
 
 		case Qt::Key_Right:
 		case Qt::Key_L:
 		case Qt::Key_D:
-			m_focusHandler->focusNext(QtGraphFocusHandler::Direction::RIGHT, m_shift);
+			m_focusHandler->focusNext(GraphFocusHandler::Direction::RIGHT, m_shift);
 			break;
 
 		case Qt::Key_E:

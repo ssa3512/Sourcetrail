@@ -1,22 +1,22 @@
-#include "QtGraphFocusHandler.h"
+#include "GraphFocusHandler.h"
 
 #include "QtGraphEdge.h"
 #include "QtGraphNode.h"
 #include "utility.h"
 
-QtGraphFocusHandler::QtGraphFocusHandler(QtGraphFocusClient* client)
+GraphFocusHandler::GraphFocusHandler(GraphFocusClient* client)
 	: m_client(client)
 {
 }
 
-void QtGraphFocusHandler::clear()
+void GraphFocusHandler::clear()
 {
 	m_focusNode = nullptr;
 	m_focusEdge = nullptr;
 	m_lastFocusId = 0;
 }
 
-void QtGraphFocusHandler::focus()
+void GraphFocusHandler::focus()
 {
 	if (m_focusNode)
 	{
@@ -32,7 +32,7 @@ void QtGraphFocusHandler::focus()
 	}
 }
 
-void QtGraphFocusHandler::defocus()
+void GraphFocusHandler::defocus()
 {
 	if (m_focusNode)
 	{
@@ -44,7 +44,7 @@ void QtGraphFocusHandler::defocus()
 	}
 }
 
-void QtGraphFocusHandler::focusInitialNode()
+void GraphFocusHandler::focusInitialNode()
 {
 	QtGraphNode* nodeToFocus = nullptr;
 
@@ -69,7 +69,7 @@ void QtGraphFocusHandler::focusInitialNode()
 	}
 }
 
-void QtGraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
+void GraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
 {
 	if (m_lastFocusId)
 	{
@@ -82,7 +82,7 @@ void QtGraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
 	}
 }
 
-void QtGraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
+void GraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
 {
 	if (m_focusNode)
 	{
@@ -129,7 +129,7 @@ void QtGraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
 	}
 }
 
-void QtGraphFocusHandler::focusNode(QtGraphNode* node)
+void GraphFocusHandler::focusNode(QtGraphNode* node)
 {
 	m_client->focusView();
 
@@ -148,7 +148,7 @@ void QtGraphFocusHandler::focusNode(QtGraphNode* node)
 	}
 }
 
-void QtGraphFocusHandler::defocusNode(QtGraphNode* node)
+void GraphFocusHandler::defocusNode(QtGraphNode* node)
 {
 	QtGraphNode* parent = node->getParent();
 	while (parent && !parent->isFocusable())
@@ -162,7 +162,7 @@ void QtGraphFocusHandler::defocusNode(QtGraphNode* node)
 	}
 }
 
-void QtGraphFocusHandler::focusEdge(QtGraphEdge* edge)
+void GraphFocusHandler::focusEdge(QtGraphEdge* edge)
 {
 	m_client->focusView();
 
@@ -180,11 +180,11 @@ void QtGraphFocusHandler::focusEdge(QtGraphEdge* edge)
 	}
 }
 
-void QtGraphFocusHandler::defocusEdge(QtGraphEdge* edge)
+void GraphFocusHandler::defocusEdge(QtGraphEdge* edge)
 {
 }
 
-void QtGraphFocusHandler::defocusGraph()
+void GraphFocusHandler::defocusGraph()
 {
 	if (m_focusNode)
 	{
@@ -199,7 +199,7 @@ void QtGraphFocusHandler::defocusGraph()
 	}
 }
 
-void QtGraphFocusHandler::activateFocus()
+void GraphFocusHandler::activateFocus()
 {
 	if (m_focusNode)
 	{
@@ -211,7 +211,7 @@ void QtGraphFocusHandler::activateFocus()
 	}
 }
 
-void QtGraphFocusHandler::expandFocus()
+void GraphFocusHandler::expandFocus()
 {
 	if (m_focusNode)
 	{
@@ -223,7 +223,7 @@ void QtGraphFocusHandler::expandFocus()
 	}
 }
 
-QtGraphNode* QtGraphFocusHandler::findNextNode(QtGraphNode* node, Direction direction)
+QtGraphNode* GraphFocusHandler::findNextNode(QtGraphNode* node, Direction direction)
 {
 	switch (direction)
 	{
@@ -291,7 +291,7 @@ QtGraphNode* QtGraphFocusHandler::findNextNode(QtGraphNode* node, Direction dire
 	return nullptr;
 }
 
-QtGraphNode* QtGraphFocusHandler::findNextNode(QtGraphEdge* edge, Direction direction)
+QtGraphNode* GraphFocusHandler::findNextNode(QtGraphEdge* edge, Direction direction)
 {
 	if (edge->isHorizontal())
 	{
@@ -319,7 +319,7 @@ QtGraphNode* QtGraphFocusHandler::findNextNode(QtGraphEdge* edge, Direction dire
 	return nullptr;
 }
 
-QtGraphEdge* QtGraphFocusHandler::findNextEdge(QPointF pos, Direction direction, QtGraphEdge* previousEdge)
+QtGraphEdge* GraphFocusHandler::findNextEdge(QPointF pos, Direction direction, QtGraphEdge* previousEdge)
 {
 	QtGraphEdge* closestEdge = nullptr;
 	QRectF previousEdgeRect;
@@ -380,7 +380,7 @@ QtGraphEdge* QtGraphFocusHandler::findNextEdge(QPointF pos, Direction direction,
 	return closestEdge;
 }
 
-QtGraphNode* QtGraphFocusHandler::findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first)
+QtGraphNode* GraphFocusHandler::findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first)
 {
 	QtGraphNode* result = nullptr;
 
@@ -409,7 +409,7 @@ QtGraphNode* QtGraphFocusHandler::findChildNodeRecursive(const std::list<QtGraph
 	return result;
 }
 
-QtGraphNode* QtGraphFocusHandler::findSibling(const QtGraphNode* node, Direction direction)
+QtGraphNode* GraphFocusHandler::findSibling(const QtGraphNode* node, Direction direction)
 {
 	QtGraphNode* nextSibling = nullptr;
 	Vec2i pos = node->getPosition();
@@ -469,7 +469,7 @@ QtGraphNode* QtGraphFocusHandler::findSibling(const QtGraphNode* node, Direction
 	return nextSibling;
 }
 
-std::vector<std::vector<QtGraphNode*>> QtGraphFocusHandler::getSiblingsHierarchyRecursive(const QtGraphNode* node)
+std::vector<std::vector<QtGraphNode*>> GraphFocusHandler::getSiblingsHierarchyRecursive(const QtGraphNode* node)
 {
 	std::vector<std::vector<QtGraphNode*>> siblingsList;
 
@@ -498,7 +498,7 @@ std::vector<std::vector<QtGraphNode*>> QtGraphFocusHandler::getSiblingsHierarchy
 	return siblingsList;
 }
 
-void QtGraphFocusHandler::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings)
+void GraphFocusHandler::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings)
 {
 	for (QtGraphNode* node : nodes)
 	{

@@ -6,10 +6,10 @@
 #include "GraphViewStyle.h"
 #include "MessageGraphNodeBundleSplit.h"
 #include "QtCountCircleItem.h"
-#include "QtGraphFocusHandler.h"
+#include "GraphFocusHandler.h"
 
 QtGraphNodeBundle::QtGraphNodeBundle(
-	QtGraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name, bool interactive
+	GraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name, bool interactive
 )
 	: QtGraphNode()
 	, m_focusHandler(focusHandler)
