@@ -355,6 +355,16 @@ void QtGraphView::rebuildGraph(
 			}
 		}
 
+		// focus previously focused node
+		if (m_lastFocusId)
+		{
+			QtGraphNode* nodeToFocus = findNodeRecursive(m_nodes, m_lastFocusId);
+			if (nodeToFocus)
+			{
+				m_focusNode = nodeToFocus;
+				nodeToFocus->setIsFocused(true);
+			}
+		}
 
 		// move graph to center
 		QPointF center = itemsBoundingRect(m_nodes).center();
@@ -554,10 +564,8 @@ void QtGraphView::activateEdge(Id edgeId)
 	);
 }
 
-#include <iostream>
 void QtGraphView::focus()
 {
-	std::cout << "focus graph" << std::endl;
 	getView()->setFocus();
 
 	if (m_focusNode)
@@ -576,7 +584,6 @@ void QtGraphView::focus()
 
 void QtGraphView::defocus()
 {
-	std::cout << "defocus graph" << std::endl;
 	getView()->clearFocus();
 
 	if (m_focusNode)
@@ -596,12 +603,16 @@ bool QtGraphView::hasFocus()
 
 void QtGraphView::focusInitialNode()
 {
-	QtGraphNode* nodeToFocus = m_oldActiveNode;
+	QtGraphNode* nodeToFocus = nullptr;
 
 	if (m_lastFocusId)
 	{
 		nodeToFocus = findNodeRecursive(m_oldNodes, m_lastFocusId);
-		m_lastFocusId = 0;
+	}
+
+	if (!nodeToFocus)
+	{
+		nodeToFocus = m_oldActiveNode;
 	}
 
 	if (!nodeToFocus)
@@ -692,6 +703,7 @@ void QtGraphView::focusNode(QtGraphNode* node)
 	{
 		node->setIsFocused(true);
 		m_focusNode = node;
+		m_lastFocusId = node->getTokenId();
 	}
 }
 
@@ -762,7 +774,7 @@ void QtGraphView::expandFocus()
 {
 	if (m_focusNode)
 	{
-		m_lastFocusId = m_focusNode->onCollapseExpand();
+		m_focusNode->onCollapseExpand();
 	}
 	else if (m_focusEdge)
 	{
