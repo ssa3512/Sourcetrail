@@ -217,7 +217,7 @@ QtCustomTrailView::QtCustomTrailView(ViewLayout* viewLayout)
 		for (NodeType::Type t : nodeTypes)
 		{
 			nodeFilters.push_back(QString::fromStdString(NodeType::getReadableTypeString(t)));
-			nodeColors.push_back(QColor(scheme->getNodeTypeColor(t, "fill", ColorScheme::FOCUS).c_str()));
+			nodeColors.push_back(QColor(scheme->getNodeTypeColor(t, "fill", true).c_str()));
 		}
 
 		QVBoxLayout* filterLayout = addFilters("Nodes:", nodeFilters, nodeColors, &m_nodeFilters, 11);

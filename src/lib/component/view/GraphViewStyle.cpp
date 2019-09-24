@@ -481,7 +481,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleForNodeType(
 
 	if (isFocused)
 	{
-		style.color.border = "red";
+		style.color.border = getFocusColor();
 		style.borderWidth = 2;
 	}
 
@@ -617,7 +617,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bo
 
 	if (isFocused)
 	{
-		style.color.border = "red";
+		style.color.border = getFocusColor();
 	}
 
 	return style;
@@ -650,7 +650,14 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 	style.originOffset.y = 5;
 	style.targetOffset.y = -5;
 
-	style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)), isFocused);
+	if (isFocused)
+	{
+		style.color = getFocusColor();
+	}
+	else
+	{
+		style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)));
+	}
 
 	switch (type)
 	{
@@ -766,9 +773,9 @@ const std::string& GraphViewStyle::getFocusColor()
 	return s_focusColor;
 }
 
-const GraphViewStyle::NodeColor& GraphViewStyle::getNodeColor(const std::string& typeStr, bool focus)
+const GraphViewStyle::NodeColor& GraphViewStyle::getNodeColor(const std::string& typeStr, bool highlight)
 {
-	std::string type = focus ? typeStr + "focus" : typeStr;
+	std::string type = highlight ? typeStr + "highlight" : typeStr;
 	std::map<std::string, NodeColor>::const_iterator it = s_nodeColors.find(type);
 
 	if (it != s_nodeColors.end())
@@ -778,26 +785,20 @@ const GraphViewStyle::NodeColor& GraphViewStyle::getNodeColor(const std::string&
 
 	NodeColor color;
 	ColorScheme* scheme = ColorScheme::getInstance().get();
-	ColorScheme::ColorState state = focus ? ColorScheme::FOCUS : ColorScheme::NORMAL;
 
-	color.fill = scheme->getNodeTypeColor(typeStr, "fill", state);
-	color.border = scheme->getNodeTypeColor(typeStr, "border", state);
-	color.text = scheme->getNodeTypeColor(typeStr, "text", state);
-	color.icon = scheme->getNodeTypeColor(typeStr, "icon", state);
-	color.hatching = scheme->getNodeTypeColor(typeStr, "hatching", state);
+	color.fill = scheme->getNodeTypeColor(typeStr, "fill", highlight);
+	color.border = scheme->getNodeTypeColor(typeStr, "border", highlight);
+	color.text = scheme->getNodeTypeColor(typeStr, "text", highlight);
+	color.icon = scheme->getNodeTypeColor(typeStr, "icon", highlight);
+	color.hatching = scheme->getNodeTypeColor(typeStr, "hatching", highlight);
 
 	s_nodeColors.emplace(type, color);
 
 	return s_nodeColors.find(type)->second;
 }
 
-const std::string& GraphViewStyle::getEdgeColor(const std::string& type, bool focus)
+const std::string& GraphViewStyle::getEdgeColor(const std::string& type)
 {
-	if (focus)
-	{
-		return getFocusColor();
-	}
-
 	std::map<std::string, std::string>::const_iterator it = s_edgeColors.find(type);
 	if (it != s_edgeColors.end())
 	{

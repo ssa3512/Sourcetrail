@@ -255,7 +255,7 @@
 			<type>
 				<border>
 					<normal>#20FFFFFF</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<text>
 					<normal>#FFFFFF</normal>
@@ -295,11 +295,11 @@
 			<function>
 				<fill>
 					<normal>#FFCC3B</normal>
-					<focus>#FFD05A</focus>
+					<highlight>#FFD05A</highlight>
 				</fill>
 				<border>
 					<normal>transparent</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<hatching>
 					<normal>#FFE8A6</normal>
@@ -312,11 +312,11 @@
 			<global_variable>
 				<fill>
 					<normal>#2FC2D6</normal>
-					<focus>#38D3E8</focus>
+					<highlight>#38D3E8</highlight>
 				</fill>
 				<border>
 					<normal>transparent</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<hatching>
 					<normal>#96DAE3</normal>
@@ -338,7 +338,7 @@
 				</fill>
 				<border>
 					<normal>#80FFFFFF</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<text>
 					<normal>#FFFFFF</normal>
@@ -360,11 +360,11 @@
 			<file>
 				<fill>
 					<normal>#4E82F6</normal>
-					<focus>#6793F6</focus>
+					<highlight>#6793F6</highlight>
 				</fill>
 				<border>
 					<normal>#20FFFFFF</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<text>
 					<normal>#FFFFFF</normal>
@@ -394,7 +394,7 @@
 				</fill>
 				<border>
 					<normal>#80FFFFFF</normal>
-					<focus>#FFFFFF</focus>
+					<highlight>#FFFFFF</highlight>
 				</border>
 				<text>
 					<normal>#FFFFFF</normal>
@@ -454,7 +454,7 @@
 					</text>
 					<border>
 						<normal>#4E82F6</normal>
-						<focus>#6793F6</focus>
+						<highlight>#6793F6</highlight>
 					</border>
 				</file>
 				<namespace>
@@ -466,7 +466,7 @@
 					</text>
 					<border>
 						<normal>#873E3E</normal>
-						<focus>#944444</focus>
+						<highlight>#944444</highlight>
 					</border>
 				</namespace>
 				<inheritance>

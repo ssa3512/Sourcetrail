@@ -140,8 +140,8 @@ public:
 	static float getZoomFactor();
 
 	static const std::string& getFocusColor();
-	static const NodeColor& getNodeColor(const std::string& typeStr, bool focus);
-	static const std::string& getEdgeColor(const std::string& type, bool focus);
+	static const NodeColor& getNodeColor(const std::string& typeStr, bool highlight);
+	static const std::string& getEdgeColor(const std::string& type);
 	static const NodeColor& getScreenMatchColor(bool focus);
 
 	static int s_gridCellSize;
