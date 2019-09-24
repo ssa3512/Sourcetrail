@@ -189,6 +189,8 @@ void QtGraphicsView::ensureVisibleAnimated(const QRectF& rect, int xmargin, int 
 	int xval = horizontalScrollBar()->value();
 	int yval = verticalScrollBar()->value();
 
+	setInteractive(false);
+
 	ensureVisible(rect, xmargin, ymargin);
 
 	if (ApplicationSettings::getInstance()->getUseAnimations() && isVisible())
@@ -215,7 +217,18 @@ void QtGraphicsView::ensureVisibleAnimated(const QRectF& rect, int xmargin, int 
 		yanim->setEasingCurve(QEasingCurve::InOutQuad);
 		move->addAnimation(yanim);
 
+		connect(move, &QPropertyAnimation::finished,
+			[this]()
+			{
+				setInteractive(true);
+			}
+		);
+
 		move->start();
+	}
+	else
+	{
+		setInteractive(true);
 	}
 }
 
