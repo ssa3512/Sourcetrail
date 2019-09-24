@@ -44,11 +44,6 @@ void QtGraphFocusHandler::defocus()
 	}
 }
 
-Id QtGraphFocusHandler::getLastFocusId() const
-{
-	return m_lastFocusId;
-}
-
 void QtGraphFocusHandler::focusInitialNode()
 {
 	QtGraphNode* nodeToFocus = nullptr;
@@ -71,6 +66,19 @@ void QtGraphFocusHandler::focusInitialNode()
 	if (nodeToFocus)
 	{
 		focusNode(nodeToFocus);
+	}
+}
+
+void QtGraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
+{
+	if (m_lastFocusId)
+	{
+		QtGraphNode* nodeToFocus = m_client->findNodeRecursive(newNodes, m_lastFocusId);
+		if (nodeToFocus)
+		{
+			m_focusNode = nodeToFocus;
+			nodeToFocus->setIsFocused(true);
+		}
 	}
 }
 
@@ -117,7 +125,7 @@ void QtGraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
 
 	if (m_focusNode)
 	{
-		m_client->showNode(m_focusNode);
+		m_client->ensureNodeVisible(m_focusNode);
 	}
 }
 
@@ -152,12 +160,6 @@ void QtGraphFocusHandler::defocusNode(QtGraphNode* node)
 	{
 		focusNode(parent);
 	}
-}
-
-void QtGraphFocusHandler::refocusNode(QtGraphNode* node)
-{
-	m_focusNode = node;
-	node->setIsFocused(true);
 }
 
 void QtGraphFocusHandler::focusEdge(QtGraphEdge* edge)

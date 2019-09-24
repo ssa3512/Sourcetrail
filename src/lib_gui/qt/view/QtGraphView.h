@@ -82,9 +82,9 @@ public:
 
 	QtGraphNode* getActiveNode() const override;
 
-	void showNode(QtGraphNode* node) override;
-
 	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId) override;
+
+	void ensureNodeVisible(QtGraphNode* node) override;
 
 private slots:
 	void updateScrollBars();

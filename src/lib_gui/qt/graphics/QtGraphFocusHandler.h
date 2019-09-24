@@ -20,9 +20,9 @@ public:
 
 	virtual QtGraphNode* getActiveNode() const = 0;
 
-	virtual void showNode(QtGraphNode* node) = 0;
-
 	virtual QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId) = 0;
+
+	virtual void ensureNodeVisible(QtGraphNode* node) = 0;
 };
 
 class QtGraphFocusHandler
@@ -43,15 +43,13 @@ public:
 	void focus();
 	void defocus();
 
-	Id getLastFocusId() const;
-
 	void focusInitialNode();
+	void refocusNode(const std::list<QtGraphNode*>& newNodes);
 
 	void focusNext(Direction direction, bool navigateEdges);
 
 	void focusNode(QtGraphNode* node);
 	void defocusNode(QtGraphNode* node);
-	void refocusNode(QtGraphNode* node);
 
 	void focusEdge(QtGraphEdge* edge);
 	void defocusEdge(QtGraphEdge* edge);

@@ -355,14 +355,7 @@ void QtGraphView::rebuildGraph(
 		}
 
 		// focus previously focused node
-		if (m_focusHandler.getLastFocusId())
-		{
-			QtGraphNode* nodeToFocus = findNodeRecursive(m_nodes, m_focusHandler.getLastFocusId());
-			if (nodeToFocus)
-			{
-				m_focusHandler.refocusNode(nodeToFocus);
-			}
-		}
+		m_focusHandler.refocusNode(m_nodes);
 
 		// move graph to center
 		QPointF center = itemsBoundingRect(m_nodes).center();
@@ -600,7 +593,7 @@ QtGraphNode* QtGraphView::getActiveNode() const
 	return m_oldActiveNode;
 }
 
-void QtGraphView::showNode(QtGraphNode* node)
+void QtGraphView::ensureNodeVisible(QtGraphNode* node)
 {
 	QtGraphicsView* view = getView();
 
