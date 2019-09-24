@@ -131,6 +131,7 @@ add_files(
 	qt/graphics/graph/QtGraphNodeText.cpp
 	qt/graphics/graph/QtGraphNodeText.h
 
+	qt/graphics/QtGraphFocusHandler.cpp
 	qt/graphics/QtGraphFocusHandler.h
 	qt/graphics/QtGraphicsView.cpp
 	qt/graphics/QtGraphicsView.h

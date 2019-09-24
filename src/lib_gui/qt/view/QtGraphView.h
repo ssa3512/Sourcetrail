@@ -29,7 +29,7 @@ class QtSelfRefreshIconButton;
 class QtGraphView
 	: public QObject
 	, public GraphView
-	, public QtGraphFocusHandler
+	, public QtGraphFocusClient
 {
 	Q_OBJECT
 
@@ -74,19 +74,17 @@ public:
 
 	void focusInitialNode();
 
-	// QtGraphFocusHandler implementation
-	void focusNext(Direction direction, bool navigateEdges) override;
+	// QtGraphFocusClient implementation
+	void focusView() override;
 
-	void focusNode(QtGraphNode* node) override;
-	void defocusNode(QtGraphNode* node) override;
+	const std::list<QtGraphNode*>& getGraphNodes() const override;
+	const std::list<QtGraphEdge*>& getGraphEdges() const override;
 
-	void focusEdge(QtGraphEdge* edge) override;
-	void defocusEdge(QtGraphEdge* edge) override;
+	QtGraphNode* getActiveNode() const override;
 
-	void defocusGraph();
+	void showNode(QtGraphNode* node) override;
 
-	void activateFocus() override;
-	void expandFocus() override;
+	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId) override;
 
 private slots:
 	void updateScrollBars();
@@ -122,18 +120,6 @@ private:
 
 	void doResize();
 
-	QtGraphNode* findNextNode(QtGraphNode* node, Direction direction);
-	QtGraphNode* findNextNode(QtGraphEdge* edge, Direction direction);
-	QtGraphEdge* findNextEdge(QPointF pos, Direction direction, QtGraphEdge* previousEdge = nullptr);
-
-	QtGraphNode* findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first);
-
-	QtGraphNode* findSibling(const QtGraphNode* node, Direction direction);
-	std::vector<std::vector<QtGraphNode*>> getSiblingsHierarchyRecursive(const QtGraphNode* node);
-	void addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings);
-
-	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId);
-
 	QtGraphNode* createNodeRecursive(
 		QGraphicsView* view, QtGraphNode* parentNode, const DummyNode* node, bool multipleActive, bool interactive);
 	QtGraphEdge* createEdge(
@@ -156,6 +142,8 @@ private:
 
 	void createTransition();
 
+	QtGraphFocusHandler m_focusHandler;
+
 	QtThreadedLambdaFunctor m_onQtThread;
 
 	std::shared_ptr<Graph> m_graph;
@@ -169,10 +157,6 @@ private:
 
 	std::vector<QtGraphNode*> m_activeNodes;
 	QtGraphNode* m_oldActiveNode = nullptr;
-
-	QtGraphNode* m_focusNode = nullptr;
-	QtGraphEdge* m_focusEdge = nullptr;
-	Id m_lastFocusId = 0;
 
 	bool m_centerActiveNode;
 	bool m_scrollToTop;

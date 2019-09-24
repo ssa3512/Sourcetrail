@@ -491,6 +491,7 @@ void QtMainWindow::resizeEvent(QResizeEvent *event)
 
 bool QtMainWindow::focusNextPrevChild(bool next)
 {
+	// makes tab key available in key press event
 	return false;
 }
 

@@ -41,6 +41,7 @@
 
 QtGraphView::QtGraphView(ViewLayout* viewLayout)
 	: GraphView(viewLayout)
+	, m_focusHandler(this)
 	, m_centerActiveNode(false)
 	, m_scrollToTop(false)
 	, m_restoreScroll(false)
@@ -56,7 +57,7 @@ QtGraphView::QtGraphView(ViewLayout* viewLayout)
 	widget->setLayout(layout);
 
 	QGraphicsScene* scene = new QGraphicsScene(widget);
-	QtGraphicsView* view = new QtGraphicsView(this, widget);
+	QtGraphicsView* view = new QtGraphicsView(&m_focusHandler, widget);
 	view->setScene(scene);
 	view->setDragMode(QGraphicsView::ScrollHandDrag);
 	view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -342,8 +343,6 @@ void QtGraphView::rebuildGraph(
 		m_activeNodes.clear();
 		m_oldActiveNode = nullptr;
 		m_virtualNodeRects.clear();
-		m_focusNode = nullptr;
-		m_focusEdge = nullptr;
 
 		for (unsigned int i = 0; i < nodes.size(); i++)
 		{
@@ -356,13 +355,12 @@ void QtGraphView::rebuildGraph(
 		}
 
 		// focus previously focused node
-		if (m_lastFocusId)
+		if (m_focusHandler.getLastFocusId())
 		{
-			QtGraphNode* nodeToFocus = findNodeRecursive(m_nodes, m_lastFocusId);
+			QtGraphNode* nodeToFocus = findNodeRecursive(m_nodes, m_focusHandler.getLastFocusId());
 			if (nodeToFocus)
 			{
-				m_focusNode = nodeToFocus;
-				nodeToFocus->setIsFocused(true);
+				m_focusHandler.refocusNode(nodeToFocus);
 			}
 		}
 
@@ -417,10 +415,9 @@ void QtGraphView::clear()
 {
 	m_onQtThread([this]()
 	{
+		m_focusHandler.clear();
+
 		m_oldActiveNode = nullptr;
-		m_focusNode = nullptr;
-		m_focusEdge = nullptr;
-		m_lastFocusId = 0;
 		m_activeNodes.clear();
 
 		for (QtGraphNode* node : m_oldNodes)
@@ -568,32 +565,14 @@ void QtGraphView::focus()
 {
 	getView()->setFocus();
 
-	if (m_focusNode)
-	{
-		m_focusNode->setIsFocused(true);
-	}
-	else if (m_focusEdge)
-	{
-		m_focusEdge->setIsFocused(true);
-	}
-	else
-	{
-		focusInitialNode();
-	}
+	m_focusHandler.focus();
 }
 
 void QtGraphView::defocus()
 {
 	getView()->clearFocus();
 
-	if (m_focusNode)
-	{
-		m_focusNode->setIsFocused(false);
-	}
-	else if (m_focusEdge)
-	{
-		m_focusEdge->setIsFocused(false);
-	}
+	m_focusHandler.defocus();
 }
 
 bool QtGraphView::hasFocus()
@@ -601,185 +580,44 @@ bool QtGraphView::hasFocus()
 	return getView()->hasFocus();
 }
 
-void QtGraphView::focusInitialNode()
-{
-	QtGraphNode* nodeToFocus = nullptr;
-
-	if (m_lastFocusId)
-	{
-		nodeToFocus = findNodeRecursive(m_oldNodes, m_lastFocusId);
-	}
-
-	if (!nodeToFocus)
-	{
-		nodeToFocus = m_oldActiveNode;
-	}
-
-	if (!nodeToFocus)
-	{
-		nodeToFocus = findChildNodeRecursive(m_oldNodes, true);
-	}
-
-	if (nodeToFocus)
-	{
-		focusNode(nodeToFocus);
-	}
-}
-
-void QtGraphView::focusNext(Direction direction, bool navigateEdges)
-{
-	if (m_focusNode)
-	{
-		if (navigateEdges)
-		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusNode->sceneBoundingRect().center(), direction);
-			if (nextEdge)
-			{
-				focusEdge(nextEdge);
-			}
-		}
-		else
-		{
-			QtGraphNode* nextNode = findNextNode(m_focusNode, direction);
-			if (nextNode)
-			{
-				focusNode(nextNode);
-			}
-		}
-	}
-	else if (m_focusEdge)
-	{
-		if (navigateEdges)
-		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusEdge->getBoundingRect().center(), direction, m_focusEdge);
-			if (nextEdge)
-			{
-				focusEdge(nextEdge);
-			}
-		}
-		else
-		{
-			QtGraphNode* nextNode = findNextNode(m_focusEdge, direction);
-			if (nextNode)
-			{
-				focusNode(nextNode);
-			}
-		}
-	}
-
-	if (m_focusNode)
-	{
-		QtGraphicsView* view = getView();
-
-		Vec4i r = m_focusNode->getBoundingRect();
-		QRectF rect(r.x(), r.y(), r.z() - r.x(), r.w() - r.y());
-
-		if (rect.width() > view->width() - 100)
-		{
-			rect.setWidth(view->width() - 100);
-		}
-
-		if (rect.height() > view->height() - 100)
-		{
-			rect.setHeight(view->height() - 100);
-		}
-
-		view->ensureVisibleAnimated(rect, 100, 100);
-	}
-}
-
-void QtGraphView::focusNode(QtGraphNode* node)
+void QtGraphView::focusView()
 {
 	getView()->setFocus();
-
-	if (node == m_focusNode)
-	{
-		return;
-	}
-
-	defocusGraph();
-
-	if (node->isFocusable())
-	{
-		node->setIsFocused(true);
-		m_focusNode = node;
-		m_lastFocusId = node->getTokenId();
-	}
 }
 
-void QtGraphView::defocusNode(QtGraphNode* node)
+const std::list<QtGraphNode*>& QtGraphView::getGraphNodes() const
 {
-	QtGraphNode* parent = node->getParent();
-	while (parent && !parent->isFocusable())
-	{
-		parent = parent->getParent();
-	}
-
-	if (parent)
-	{
-		focusNode(parent);
-	}
+	return m_oldNodes;
 }
 
-void QtGraphView::focusEdge(QtGraphEdge* edge)
+const std::list<QtGraphEdge*>& QtGraphView::getGraphEdges() const
 {
-	getView()->setFocus();
-
-	if (edge == m_focusEdge)
-	{
-		return;
-	}
-
-	defocusGraph();
-
-	if (edge->isFocusable())
-	{
-		edge->setIsFocused(true);
-		m_focusEdge = edge;
-	}
+	return m_oldEdges;
 }
 
-void QtGraphView::defocusEdge(QtGraphEdge* edge)
+QtGraphNode* QtGraphView::getActiveNode() const
 {
+	return m_oldActiveNode;
 }
 
-void QtGraphView::defocusGraph()
+void QtGraphView::showNode(QtGraphNode* node)
 {
-	if (m_focusNode)
+	QtGraphicsView* view = getView();
+
+	Vec4i r = node->getBoundingRect();
+	QRectF rect(r.x(), r.y(), r.z() - r.x(), r.w() - r.y());
+
+	if (rect.width() > view->width() - 100)
 	{
-		m_focusNode->setIsFocused(false);
-		m_focusNode = nullptr;
+		rect.setWidth(view->width() - 100);
 	}
 
-	if (m_focusEdge)
+	if (rect.height() > view->height() - 100)
 	{
-		m_focusEdge->setIsFocused(false);
-		m_focusEdge = nullptr;
+		rect.setHeight(view->height() - 100);
 	}
-}
 
-void QtGraphView::activateFocus()
-{
-	if (m_focusNode)
-	{
-		m_focusNode->onClick();
-	}
-	else if (m_focusEdge)
-	{
-		m_focusEdge->onClick();
-	}
-}
-
-void QtGraphView::expandFocus()
-{
-	if (m_focusNode)
-	{
-		m_focusNode->onCollapseExpand();
-	}
-	else if (m_focusEdge)
-	{
-		m_focusEdge->onClick();
-	}
+	view->ensureVisibleAnimated(rect, 100, 100);
 }
 
 void QtGraphView::updateScrollBars()
@@ -1158,7 +996,7 @@ void QtGraphView::switchToNewGraphData()
 
 	if (hasFocus())
 	{
-		focusInitialNode();
+		m_focusHandler.focusInitialNode();
 	}
 
 	// Repaint to make sure all artifacts are removed
@@ -1189,296 +1027,6 @@ QtGraphicsView* QtGraphView::getView() const
 void QtGraphView::doResize()
 {
 	getView()->setSceneRect(getSceneRect(m_oldNodes));
-}
-
-QtGraphNode* QtGraphView::findNextNode(QtGraphNode* node, Direction direction)
-{
-	switch (direction)
-	{
-		case Direction::UP:
-		{
-			QtGraphNode* nextNode = findSibling(node, direction);
-			if (nextNode)
-			{
-				QtGraphNode* childNode = nextNode;
-				QtGraphNode* lastChildNode = nullptr;
-				while (childNode)
-				{
-					childNode = findChildNodeRecursive(childNode->getSubNodes(), false);
-					if (childNode)
-					{
-						lastChildNode = childNode;
-					}
-				}
-
-				if (lastChildNode && lastChildNode->getPosition().y() < node->getPosition().y())
-				{
-					return lastChildNode;
-				}
-
-				return nextNode;
-			}
-
-			QtGraphNode* parent = node->getParent();
-			while (parent && !parent->isFocusable())
-			{
-				parent = parent->getParent();
-			}
-
-			if (parent)
-			{
-				return parent;
-			}
-			break;
-		}
-
-		case Direction::DOWN:
-		{
-			if (node->getSubNodes().size())
-			{
-				QtGraphNode* nextNode = findChildNodeRecursive(node->getSubNodes(), true);
-				if (nextNode)
-				{
-					return nextNode;
-				}
-			}
-		}
-
-		case Direction::LEFT:
-		case Direction::RIGHT:
-		{
-			QtGraphNode* nextNode = findSibling(node, direction);
-			if (nextNode)
-			{
-				return nextNode;
-			}
-			break;
-		}
-	}
-
-	return nullptr;
-}
-
-QtGraphNode* QtGraphView::findNextNode(QtGraphEdge* edge, Direction direction)
-{
-	if (edge->isHorizontal())
-	{
-		if ((direction == Direction::LEFT) == (edge->getOwner()->getPosition().x() < edge->getTarget()->getPosition().x()))
-		{
-			return edge->getOwner();
-		}
-		else
-		{
-			return edge->getTarget();
-		}
-	}
-	else
-	{
-		if ((direction == Direction::UP) == (edge->getOwner()->getPosition().y() < edge->getTarget()->getPosition().y()))
-		{
-			return edge->getOwner();
-		}
-		else
-		{
-			return edge->getTarget();
-		}
-	}
-
-	return nullptr;
-}
-
-QtGraphEdge* QtGraphView::findNextEdge(QPointF pos, Direction direction, QtGraphEdge* previousEdge)
-{
-	QtGraphEdge* closestEdge = nullptr;
-	QRectF previousEdgeRect;
-	if (previousEdge)
-	{
-		previousEdgeRect = previousEdge->getBoundingRect();
-	}
-
-	float minDist = 0;
-
-	for (QtGraphEdge* edge : m_oldEdges)
-	{
-		if (edge == previousEdge || !edge->isFocusable())
-		{
-			continue;
-		}
-
-		QRectF edgeRect = edge->getBoundingRect();
-		QPointF edgePos = edgeRect.center();
-
-		bool top = edgePos.y() < pos.y();
-		bool bottom = edgePos.y() > pos.y();
-		bool left = edgePos.x() < pos.x();
-		bool right = edgePos.x() > pos.x();
-
-		bool isDir =
-			(direction == Direction::UP && top) ||
-			(direction == Direction::DOWN && bottom) ||
-			(direction == Direction::LEFT && left) ||
-			(direction == Direction::RIGHT && right);
-
-		if (isDir)
-		{
-			float distX = std::abs(pos.x() - edgePos.x());
-			float distY = std::abs(pos.y() - edgePos.y());
-
-			bool vertical = (direction == Direction::UP || direction == Direction::DOWN);
-
-			float distXMult = vertical ? 2 : 1;
-			float distYMult = vertical ? 1 : 2;
-
-			// only use one dimension for distance calculation in aggregation graphs to not miss certain edges
-			if (edge->isBezierEdge() && m_oldNodes.size() == 2)
-			{
-				distXMult = vertical ? 0 : 1;
-				distYMult = vertical ? 1 : 0;
-			}
-
-			float dist = distX * distXMult + distY * distYMult;
-			if (!minDist || dist < minDist)
-			{
-				minDist = dist;
-				closestEdge = edge;
-			}
-		}
-	}
-
-	return closestEdge;
-}
-
-QtGraphNode* QtGraphView::findChildNodeRecursive(const std::list<QtGraphNode*>& nodes, bool first)
-{
-	QtGraphNode* result = nullptr;
-
-	for (QtGraphNode* node : nodes)
-	{
-		if (node->isFocusable())
-		{
-			result = node;
-			if (first)
-			{
-				break;
-			}
-		}
-
-		QtGraphNode* newResult = findChildNodeRecursive(node->getSubNodes(), first);
-		if (newResult)
-		{
-			result = newResult;
-			if (first)
-			{
-				break;
-			}
-		}
-	}
-
-	return result;
-}
-
-QtGraphNode* QtGraphView::findSibling(const QtGraphNode* node, Direction direction)
-{
-	QtGraphNode* nextSibling = nullptr;
-	Vec2i pos = node->getPosition();
-	Vec4i rect = node->getBoundingRect();
-	float minDist = 0;
-
-	for (auto siblings : getSiblingsHierarchyRecursive(node))
-	{
-		for (QtGraphNode* sibling : siblings)
-		{
-			if (sibling == node || !sibling->isFocusable())
-			{
-				continue;
-			}
-
-			Vec4i rectS = sibling->getBoundingRect();
-
-			bool top = rectS.w() < rect.y();
-			bool bottom = rectS.y() > rect.w();
-			bool left = rectS.z() < rect.x();
-			bool right = rectS.x() > rect.z();
-
-			bool isDir =
-				(direction == Direction::UP && (top || (!top && !bottom && !left && !right))) ||
-				(direction == Direction::DOWN && bottom) ||
-				(direction == Direction::LEFT && left) ||
-				(direction == Direction::RIGHT && right);
-
-			if (isDir)
-			{
-				float distX = 0;
-				float distY = 0;
-
-				float distXMult = (direction == Direction::UP || direction == Direction::DOWN) ? 2 : 1;
-				float distYMult = (direction == Direction::LEFT || direction == Direction::RIGHT) ? 2 : 1;
-
-				if (top) distY = rect.y() - rectS.w();
-				if (bottom) distY = rectS.y() - rect.w();
-				if (left) distX = rect.x() - rectS.z();
-				if (right) distX = rectS.x() - rect.z();
-
-				float dist = distX * distXMult + distY * distYMult;
-				if (!nextSibling || dist < minDist)
-				{
-					nextSibling = sibling;
-					minDist = dist;
-				}
-			}
-		}
-
-		if (nextSibling)
-		{
-			break;
-		}
-	}
-
-	return nextSibling;
-}
-
-std::vector<std::vector<QtGraphNode*>> QtGraphView::getSiblingsHierarchyRecursive(const QtGraphNode* node)
-{
-	std::vector<std::vector<QtGraphNode*>> siblingsList;
-
-	QtGraphNode* parent = node->getParent();
-	while (parent && !parent->isDataNode() && !parent->isGroupNode())
-	{
-		parent = parent->getParent();
-	}
-
-	if (parent)
-	{
-		std::vector<QtGraphNode*> siblings;
-		addSiblingsRecursive(parent->getSubNodes(), siblings);
-		if (siblings.size())
-		{
-			siblingsList.push_back(siblings);
-		}
-
-		utility::append(siblingsList, getSiblingsHierarchyRecursive(parent));
-	}
-	else
-	{
-		siblingsList.push_back(utility::toVector(m_oldNodes));
-	}
-
-	return siblingsList;
-}
-
-void QtGraphView::addSiblingsRecursive(const std::list<QtGraphNode*>& nodes, std::vector<QtGraphNode*>& siblings)
-{
-	for (QtGraphNode* node : nodes)
-	{
-		if (node->isFocusable())
-		{
-			siblings.push_back(node);
-		}
-		else
-		{
-			addSiblingsRecursive(node->getSubNodes(), siblings);
-		}
-	}
 }
 
 QtGraphNode* QtGraphView::findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId)
@@ -1512,7 +1060,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	if (node->isGraphNode())
 	{
 		newNode = new QtGraphNodeData(
-			this, node->data, node->name, node->childVisible, node->getQualifierNode() != nullptr, interactive);
+			&m_focusHandler, node->data, node->name, node->childVisible, node->getQualifierNode() != nullptr, interactive);
 	}
 	else if (node->isAccessNode())
 	{
@@ -1525,7 +1073,7 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	else if (node->isBundleNode())
 	{
 		newNode = new QtGraphNodeBundle(
-			this, node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name, interactive);
+			&m_focusHandler, node->tokenId, node->getBundledNodeCount(), node->bundledNodeType, node->name, interactive);
 	}
 	else if (node->isQualifierNode())
 	{
@@ -1537,7 +1085,8 @@ QtGraphNode* QtGraphView::createNodeRecursive(
 	}
 	else if (node->isGroupNode())
 	{
-		newNode = new QtGraphNodeGroup(this, node->tokenId, node->name, node->groupType, node->interactive && interactive);
+		newNode = new QtGraphNodeGroup(
+			&m_focusHandler, node->tokenId, node->name, node->groupType, node->interactive && interactive);
 	}
 	else
 	{
@@ -1606,7 +1155,7 @@ QtGraphEdge* QtGraphView::createEdge(
 	if (owner != nullptr && target != nullptr)
 	{
 		QtGraphEdge* qtEdge = new QtGraphEdge(
-			this, owner, target, edge->data, edge->getWeight(), edge->active, interactive, edge->layoutHorizontal,
+			&m_focusHandler, owner, target, edge->data, edge->getWeight(), edge->active, interactive, edge->layoutHorizontal,
 			edge->getDirection());
 
 		if (trailMode != Graph::TRAIL_NONE)
