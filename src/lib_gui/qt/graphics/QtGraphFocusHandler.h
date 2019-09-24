@@ -20,8 +20,6 @@ public:
 
 	virtual QtGraphNode* getActiveNode() const = 0;
 
-	virtual QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId) = 0;
-
 	virtual void ensureNodeVisible(QtGraphNode* node) = 0;
 };
 

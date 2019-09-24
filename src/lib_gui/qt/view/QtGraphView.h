@@ -72,8 +72,6 @@ public:
 	void defocus() override;
 	bool hasFocus() override;
 
-	void focusInitialNode();
-
 	// QtGraphFocusClient implementation
 	void focusView() override;
 
@@ -81,8 +79,6 @@ public:
 	const std::list<QtGraphEdge*>& getGraphEdges() const override;
 
 	QtGraphNode* getActiveNode() const override;
-
-	QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId) override;
 
 	void ensureNodeVisible(QtGraphNode* node) override;
 

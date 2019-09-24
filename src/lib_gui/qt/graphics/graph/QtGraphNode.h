@@ -31,6 +31,8 @@ public slots:
 	void hideNode();
 
 public:
+	static QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId);
+
 	QtGraphNode();
 	virtual ~QtGraphNode();
 

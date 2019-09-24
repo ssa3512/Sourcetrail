@@ -444,7 +444,7 @@ void QtGraphView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
 	{
 		for (const Id& tokenId : focusedTokenIds)
 		{
-			QtGraphNode* node = findNodeRecursive(m_oldNodes, tokenId);
+			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
 			if (node)
 			{
 				node->focusIn();
@@ -469,7 +469,7 @@ void QtGraphView::defocusTokenIds(const std::vector<Id>& defocusedTokenIds)
 	{
 		for (const Id& tokenId : defocusedTokenIds)
 		{
-			QtGraphNode* node = findNodeRecursive(m_oldNodes, tokenId);
+			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
 			if (node && node->isFocusable())
 			{
 				node->focusOut();
@@ -1022,25 +1022,6 @@ void QtGraphView::doResize()
 	getView()->setSceneRect(getSceneRect(m_oldNodes));
 }
 
-QtGraphNode* QtGraphView::findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId)
-{
-	for (QtGraphNode* node : nodes)
-	{
-		if (node->getTokenId() == tokenId)
-		{
-			return node;
-		}
-
-		QtGraphNode* result = findNodeRecursive(node->getSubNodes(), tokenId);
-		if (result != nullptr)
-		{
-			return result;
-		}
-	}
-
-	return nullptr;
-}
-
 QtGraphNode* QtGraphView::createNodeRecursive(
 	QGraphicsView* view, QtGraphNode* parentNode, const DummyNode* node, bool multipleActive, bool interactive
 ){
@@ -1142,8 +1123,8 @@ QtGraphEdge* QtGraphView::createEdge(
 		return nullptr;
 	}
 
-	QtGraphNode* owner = findNodeRecursive(m_nodes, edge->ownerId);
-	QtGraphNode* target = findNodeRecursive(m_nodes, edge->targetId);
+	QtGraphNode* owner = QtGraphNode::findNodeRecursive(m_nodes, edge->ownerId);
+	QtGraphNode* target = QtGraphNode::findNodeRecursive(m_nodes, edge->targetId);
 
 	if (owner != nullptr && target != nullptr)
 	{

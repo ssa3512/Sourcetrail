@@ -50,7 +50,7 @@ void QtGraphFocusHandler::focusInitialNode()
 
 	if (m_lastFocusId)
 	{
-		nodeToFocus = m_client->findNodeRecursive(m_client->getGraphNodes(), m_lastFocusId);
+		nodeToFocus = QtGraphNode::findNodeRecursive(m_client->getGraphNodes(), m_lastFocusId);
 	}
 
 	if (!nodeToFocus)
@@ -73,7 +73,7 @@ void QtGraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
 {
 	if (m_lastFocusId)
 	{
-		QtGraphNode* nodeToFocus = m_client->findNodeRecursive(newNodes, m_lastFocusId);
+		QtGraphNode* nodeToFocus = QtGraphNode::findNodeRecursive(newNodes, m_lastFocusId);
 		if (nodeToFocus)
 		{
 			m_focusNode = nodeToFocus;

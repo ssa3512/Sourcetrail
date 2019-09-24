@@ -39,6 +39,25 @@ void QtGraphNode::hideNode()
 	this->hide();
 }
 
+QtGraphNode* QtGraphNode::findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId)
+{
+	for (QtGraphNode* node : nodes)
+	{
+		if (node->getTokenId() == tokenId)
+		{
+			return node;
+		}
+
+		QtGraphNode* result = findNodeRecursive(node->getSubNodes(), tokenId);
+		if (result != nullptr)
+		{
+			return result;
+		}
+	}
+
+	return nullptr;
+}
+
 QtGraphNode::QtGraphNode()
 {
 	this->setPen(QPen(Qt::transparent));
