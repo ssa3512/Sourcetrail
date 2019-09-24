@@ -229,6 +229,7 @@
 
 	<graph>
 		<background>white</background>
+		<focus>red</focus>
 
 		<node>
 			<default>
@@ -453,56 +454,25 @@
 			</group>
 		</node>
 		<edge>
-			<default>
-				<normal>#878787</normal>
-			</default>
+			<default>#878787</default>
 
-			<override>
-				<normal>#A37ACC</normal>
-			</override>
+			<use>#4B9FC4</use>
+			<call>#F4BC3D</call>
+			<call_trail_focus>#F56B3D</call_trail_focus>
+			<override>#A37ACC</override>
 
-			<call>
-				<normal>#F4BC3D</normal>
-				<trail_focus>#F56B3D</trail_focus>
-			</call>
+			<template_argument>#CF6B7C</template_argument>
+			<type_argument>#CF6B7C</type_argument>
+			<template_default_argument>#CF6B7C</template_default_argument>
+			<template_specialization>#CF6B7C</template_specialization>
+			<template_member_specialization>#CF6B7C</template_member_specialization>
 
-			<use>
-				<normal>#4B9FC4</normal>
-			</use>
+			<include>#719660</include>
+			<import>#719660</import>
+			<macro_use>#719660</macro_use>
+			<annotation_use>#719660</annotation_use>
 
-			<template_argument>
-				<normal>#CF6B7C</normal>
-			</template_argument>
-			<type_argument>
-				<like>template_argument</like>
-			</type_argument>
-			<template_default_argument>
-				<like>template_argument</like>
-			</template_default_argument>
-			<template_specialization>
-				<like>template_argument</like>
-			</template_specialization>
-			<template_member_specialization>
-				<like>template_argument</like>
-			</template_member_specialization>
-
-			<include>
-				<normal>#719660</normal>
-			</include>
-			<import>
-				<normal>#719660</normal>
-			</import>
-			<macro_use>
-				<normal>#719660</normal>
-			</macro_use>
-			<annotation_use>
-				<normal>#719660</normal>
-			</annotation_use>
-
-			<aggregation>
-				<normal>#CCC</normal>
-				<focus>#BBB</focus>
-			</aggregation>
+			<aggregation>#CCC</aggregation>
 		</edge>
 	</graph>
 

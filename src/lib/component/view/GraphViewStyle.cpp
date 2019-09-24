@@ -19,6 +19,7 @@ int GraphViewStyle::s_fontSize;
 std::string GraphViewStyle::s_fontName;
 float GraphViewStyle::s_zoomFactor;
 
+std::string GraphViewStyle::s_focusColor;
 std::map<std::string, GraphViewStyle::NodeColor> GraphViewStyle::s_nodeColors;
 std::map<std::string, std::string> GraphViewStyle::s_edgeColors;
 std::map<bool, GraphViewStyle::NodeColor> GraphViewStyle::s_screenMatchColors;
@@ -140,6 +141,7 @@ void GraphViewStyle::loadStyleSettings()
 	s_charWidths.clear();
 	s_charHeights.clear();
 
+	s_focusColor.clear();
 	s_nodeColors.clear();
 	s_edgeColors.clear();
 	s_screenMatchColors.clear();
@@ -648,14 +650,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 	style.originOffset.y = 5;
 	style.targetOffset.y = -5;
 
-	if (isFocused)
-	{
-		style.color = "red";
-	}
-	else
-	{
-		style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)), isActive);
-	}
+	style.color = getEdgeColor(utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)), isFocused);
 
 	switch (type)
 	{
@@ -679,8 +674,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		if (isTrailEdge && active)
 		{
 			style.width = 3;
-			style.color = ColorScheme::getInstance()->getColor(
-				"graph/edge/" + utility::encodeToUtf8(Edge::getUnderscoredTypeString(type)) + "/trail_focus", style.color);
+			style.color = ColorScheme::getInstance()->getColor("graph/edge/call_trail_focus", style.color);
 		}
 		break;
 
@@ -762,6 +756,16 @@ float GraphViewStyle::getZoomFactor()
 	return s_zoomFactor;
 }
 
+const std::string& GraphViewStyle::getFocusColor()
+{
+	if (s_focusColor.empty())
+	{
+		s_focusColor = ColorScheme::getInstance()->getColor("graph/focus");
+	}
+
+	return s_focusColor;
+}
+
 const GraphViewStyle::NodeColor& GraphViewStyle::getNodeColor(const std::string& typeStr, bool focus)
 {
 	std::string type = focus ? typeStr + "focus" : typeStr;
@@ -787,20 +791,20 @@ const GraphViewStyle::NodeColor& GraphViewStyle::getNodeColor(const std::string&
 	return s_nodeColors.find(type)->second;
 }
 
-const std::string& GraphViewStyle::getEdgeColor(const std::string& typeStr, bool focus)
+const std::string& GraphViewStyle::getEdgeColor(const std::string& type, bool focus)
 {
-	std::string type = focus ? typeStr + "focus" : typeStr;
-	std::map<std::string, std::string>::const_iterator it = s_edgeColors.find(type);
+	if (focus)
+	{
+		return getFocusColor();
+	}
 
+	std::map<std::string, std::string>::const_iterator it = s_edgeColors.find(type);
 	if (it != s_edgeColors.end())
 	{
 		return it->second;
 	}
 
-	ColorScheme* scheme = ColorScheme::getInstance().get();
-	ColorScheme::ColorState state = focus ? ColorScheme::FOCUS : ColorScheme::NORMAL;
-	std::string color = scheme->getEdgeTypeColor(typeStr, state);
-
+	std::string color = ColorScheme::getInstance()->getEdgeTypeColor(type);
 	s_edgeColors.emplace(type, color);
 
 	return s_edgeColors.find(type)->second;

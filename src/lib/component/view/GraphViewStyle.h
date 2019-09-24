@@ -139,8 +139,9 @@ public:
 
 	static float getZoomFactor();
 
+	static const std::string& getFocusColor();
 	static const NodeColor& getNodeColor(const std::string& typeStr, bool focus);
-	static const std::string& getEdgeColor(const std::string& typeStr, bool focus);
+	static const std::string& getEdgeColor(const std::string& type, bool focus);
 	static const NodeColor& getScreenMatchColor(bool focus);
 
 	static int s_gridCellSize;
@@ -167,6 +168,7 @@ private:
 	static std::string s_fontName;
 	static float s_zoomFactor;
 
+	static std::string s_focusColor;
 	static std::map<std::string, NodeColor> s_nodeColors;
 	static std::map<std::string, std::string> s_edgeColors;
 	static std::map<bool, NodeColor> s_screenMatchColors;

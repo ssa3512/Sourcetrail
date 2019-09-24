@@ -253,7 +253,7 @@ QtCustomTrailView::QtCustomTrailView(ViewLayout* viewLayout)
 		for (Edge::EdgeType t : edgeTypes)
 		{
 			edgeFilters.push_back(QString::fromStdWString(Edge::getReadableTypeString(t)));
-			edgeColors.push_back(QColor(scheme->getEdgeTypeColor(t, ColorScheme::FOCUS).c_str()));
+			edgeColors.push_back(QColor(scheme->getEdgeTypeColor(t).c_str()));
 		}
 
 		QVBoxLayout* filterLayout = addFilters("Edges:", edgeFilters, edgeColors, &m_edgeFilters, 5);

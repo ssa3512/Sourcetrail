@@ -27,8 +27,8 @@ public:
 	std::string getNodeTypeColor(NodeType type, const std::string& key, ColorState state) const;
 	std::string getNodeTypeColor(const std::string& typeStr, const std::string& key, ColorState state) const;
 
-	std::string getEdgeTypeColor(Edge::EdgeType type, ColorState state) const;
-	std::string getEdgeTypeColor(const std::string& typeStr, ColorState state) const;
+	std::string getEdgeTypeColor(Edge::EdgeType type) const;
+	std::string getEdgeTypeColor(const std::string& type) const;
 
 	std::string getSearchTypeColor(const std::string& searchTypeName, const std::string& key, const std::string& state = "normal") const;
 	std::string getSyntaxColor(const std::string& key) const;
