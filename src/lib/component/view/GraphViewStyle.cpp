@@ -673,7 +673,7 @@ GraphViewStyle::EdgeStyle GraphViewStyle::getStyleForEdgeType(
 		style.targetOffset.y = -3;
 		style.verticalOffset = 4;
 
-		if (isTrailEdge && active)
+		if (isTrailEdge && isActive)
 		{
 			style.width = 3;
 			style.color = ColorScheme::getInstance()->getColor("graph/edge/call_trail_focus", style.color);
