@@ -93,7 +93,11 @@ void QtGraphNodeData::updateStyle()
 void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
 	focusIn();
-	MessageFocusIn({ m_data->getId() }, TOOLTIP_ORIGIN_GRAPH).dispatch();
+
+	if (m_isInteractive)
+	{
+		MessageFocusIn({ m_data->getId() }, TOOLTIP_ORIGIN_GRAPH).dispatch();
+	}
 
 	// case for legend
 	if (!m_isInteractive)
@@ -120,5 +124,9 @@ void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 void QtGraphNodeData::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
 	focusOut();
-	MessageFocusOut({ m_data->getId() }).dispatch();
+
+	if (m_isInteractive)
+	{
+		MessageFocusOut({ m_data->getId() }).dispatch();
+	}
 }

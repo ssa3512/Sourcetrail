@@ -261,6 +261,11 @@ void QtGraphNode::hoverEnter()
 	}
 }
 
+bool QtGraphNode::getIsFocused() const
+{
+	return m_isFocused;
+}
+
 void QtGraphNode::setIsFocused(bool focused)
 {
 	if (m_isFocused != focused)
@@ -280,22 +285,35 @@ void QtGraphNode::setIsFocused(bool focused)
 
 void QtGraphNode::focusIn()
 {
-	if (m_focusHandler)
+	if (m_isInteractive && m_focusHandler)
 	{
 		m_focusHandler->focusNode(this);
+	}
+	else
+	{
+		coFocusIn();
 	}
 }
 
 void QtGraphNode::focusOut()
 {
-	if (m_focusHandler)
+	if (m_isInteractive && m_focusHandler)
 	{
 		m_focusHandler->defocusNode(this);
+	}
+	else
+	{
+		coFocusOut();
 	}
 }
 
 void QtGraphNode::coFocusIn()
 {
+	if (m_isCoFocused)
+	{
+		return;
+	}
+
 	m_isCoFocused = true;
 
 	forEachEdge(
@@ -303,7 +321,7 @@ void QtGraphNode::coFocusIn()
 		{
 			if (edge->isTrailEdge())
 			{
-				edge->focusIn();
+				edge->coFocusIn();
 			}
 		}
 	);
@@ -313,6 +331,11 @@ void QtGraphNode::coFocusIn()
 
 void QtGraphNode::coFocusOut()
 {
+	if (!m_isCoFocused)
+	{
+		return;
+	}
+
 	m_isCoFocused = false;
 
 	forEachEdge(
@@ -320,7 +343,7 @@ void QtGraphNode::coFocusOut()
 		{
 			if (edge->isTrailEdge())
 			{
-				edge->focusOut();
+				edge->coFocusOut();
 			}
 		}
 	);

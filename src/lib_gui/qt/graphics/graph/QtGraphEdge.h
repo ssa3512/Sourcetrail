@@ -56,8 +56,8 @@ public:
 	void onClick();
 	void onHide();
 
-	void focusIn();
-	void focusOut();
+	void coFocusIn();
+	void coFocusOut();
 
 	void setDirection(TokenComponentAggregation::Direction direction);
 

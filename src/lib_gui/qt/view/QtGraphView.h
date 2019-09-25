@@ -56,8 +56,8 @@ public:
 		const GraphParams params) override;
 	void clear() override;
 
-	void focusTokenIds(const std::vector<Id>& focusedTokenIds) override;
-	void defocusTokenIds(const std::vector<Id>& defocusedTokenIds) override;
+	void coFocusTokenIds(const std::vector<Id>& focusedTokenIds) override;
+	void deCoFocusTokenIds(const std::vector<Id>& defocusedTokenIds) override;
 
 	void resizeView() override;
 

@@ -78,6 +78,7 @@ public:
 
 	void hoverEnter();
 
+	bool getIsFocused() const;
 	void setIsFocused(bool focused);
 	void focusIn();
 	void focusOut();

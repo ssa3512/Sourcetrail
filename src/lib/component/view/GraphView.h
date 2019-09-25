@@ -43,8 +43,8 @@ public:
 		const GraphParams params) = 0;
 	virtual void clear() = 0;
 
-	virtual void focusTokenIds(const std::vector<Id>& focusedTokenIds) = 0;
-	virtual void defocusTokenIds(const std::vector<Id>& defocusedTokenIds) = 0;
+	virtual void coFocusTokenIds(const std::vector<Id>& focusedTokenIds) = 0;
+	virtual void deCoFocusTokenIds(const std::vector<Id>& defocusedTokenIds) = 0;
 
 	virtual void resizeView() = 0;
 

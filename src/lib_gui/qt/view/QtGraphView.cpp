@@ -446,14 +446,14 @@ void QtGraphView::clear()
 	});
 }
 
-void QtGraphView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
+void QtGraphView::coFocusTokenIds(const std::vector<Id>& focusedTokenIds)
 {
 	m_onQtThread([=]()
 	{
 		for (const Id& tokenId : focusedTokenIds)
 		{
 			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
-			if (node)
+			if (node && !node->getIsFocused())
 			{
 				node->coFocusIn();
 				continue;
@@ -463,7 +463,7 @@ void QtGraphView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
 			{
 				if (edge->getData() && edge->getData()->getId() == tokenId)
 				{
-					edge->focusIn();
+					edge->coFocusIn();
 					break;
 				}
 			}
@@ -471,14 +471,14 @@ void QtGraphView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
 	});
 }
 
-void QtGraphView::defocusTokenIds(const std::vector<Id>& defocusedTokenIds)
+void QtGraphView::deCoFocusTokenIds(const std::vector<Id>& defocusedTokenIds)
 {
 	m_onQtThread([=]()
 	{
 		for (const Id& tokenId : defocusedTokenIds)
 		{
 			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
-			if (node && node->isFocusable())
+			if (node && !node->getIsFocused())
 			{
 				node->coFocusOut();
 				continue;
@@ -488,7 +488,7 @@ void QtGraphView::defocusTokenIds(const std::vector<Id>& defocusedTokenIds)
 			{
 				if (edge->getData() && edge->getData()->getId() == tokenId)
 				{
-					edge->focusOut();
+					edge->coFocusOut();
 					break;
 				}
 			}

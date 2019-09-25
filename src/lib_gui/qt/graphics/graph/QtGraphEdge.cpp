@@ -31,7 +31,7 @@ void QtGraphEdge::unfocusBezierEdge()
 {
 	if (s_focusedBezierEdge)
 	{
-		s_focusedBezierEdge->focusOut();
+		s_focusedBezierEdge->coFocusOut();
 	}
 }
 
@@ -374,7 +374,7 @@ void QtGraphEdge::onHide()
 	}
 }
 
-void QtGraphEdge::focusIn()
+void QtGraphEdge::coFocusIn()
 {
 	if (!m_isCoFocused)
 	{
@@ -419,7 +419,7 @@ void QtGraphEdge::focusIn()
 	}
 }
 
-void QtGraphEdge::focusOut()
+void QtGraphEdge::coFocusOut()
 {
 	if (m_isCoFocused)
 	{
@@ -472,7 +472,7 @@ void QtGraphEdge::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 	{
 		if (s_focusedBezierEdge && s_focusedBezierEdge != this)
 		{
-			s_focusedBezierEdge->focusOut();
+			s_focusedBezierEdge->coFocusOut();
 		}
 
 		s_focusedBezierEdge = this;
@@ -482,11 +482,11 @@ void QtGraphEdge::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 
 	if (getData() && !m_useBezier)
 	{
-		MessageFocusIn(std::vector<Id>(1, getData()->getId()), TOOLTIP_ORIGIN_GRAPH).dispatch();
+		MessageFocusIn({ getData()->getId() }, TOOLTIP_ORIGIN_GRAPH).dispatch();
 	}
 	else
 	{
-		focusIn();
+		coFocusIn();
 	}
 }
 
@@ -498,11 +498,11 @@ void QtGraphEdge::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 	if (getData() && !m_useBezier)
 	{
-		MessageFocusOut(std::vector<Id>(1, getData()->getId())).dispatch();
+		MessageFocusOut({ getData()->getId() }).dispatch();
 	}
 	else
 	{
-		focusOut();
+		coFocusOut();
 	}
 
 	s_focusedEdge = nullptr;
