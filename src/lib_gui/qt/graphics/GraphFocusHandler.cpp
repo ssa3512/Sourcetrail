@@ -47,7 +47,6 @@ void GraphFocusHandler::defocus()
 void GraphFocusHandler::focusInitialNode()
 {
 	QtGraphNode* nodeToFocus = nullptr;
-
 	if (m_lastFocusId)
 	{
 		nodeToFocus = QtGraphNode::findNodeRecursive(m_client->getGraphNodes(), m_lastFocusId);
@@ -69,12 +68,12 @@ void GraphFocusHandler::focusInitialNode()
 	}
 }
 
-void GraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
+void GraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes, Id oldActiveTokenId, Id newActiveTokenId)
 {
 	m_focusNode = nullptr;
 	m_focusEdge = nullptr;
 
-	if (m_lastFocusId)
+	if (m_lastFocusId && (m_lastFocusId == newActiveTokenId || oldActiveTokenId == newActiveTokenId))
 	{
 		QtGraphNode* nodeToFocus = QtGraphNode::findNodeRecursive(newNodes, m_lastFocusId);
 		if (nodeToFocus)
@@ -83,21 +82,28 @@ void GraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
 			nodeToFocus->setIsFocused(true);
 		}
 	}
+	else
+	{
+		m_lastFocusId = 0;
+	}
 }
 
 void GraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
 {
+	QtGraphEdge* nextEdge = nullptr;
+
 	if (m_focusNode)
 	{
 		if (navigateEdges)
 		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusNode->sceneBoundingRect().center(), direction);
+			nextEdge = findNextEdge(m_focusNode->sceneBoundingRect().center(), direction);
 			if (nextEdge)
 			{
 				focusEdge(nextEdge);
 			}
 		}
-		else
+
+		if (!nextEdge)
 		{
 			QtGraphNode* nextNode = findNextNode(m_focusNode, direction);
 			if (nextNode)
@@ -110,13 +116,14 @@ void GraphFocusHandler::focusNext(Direction direction, bool navigateEdges)
 	{
 		if (navigateEdges)
 		{
-			QtGraphEdge* nextEdge = findNextEdge(m_focusEdge->getBoundingRect().center(), direction, m_focusEdge);
+			nextEdge = findNextEdge(m_focusEdge->getBoundingRect().center(), direction, m_focusEdge);
 			if (nextEdge)
 			{
 				focusEdge(nextEdge);
 			}
 		}
-		else
+
+		if (!nextEdge)
 		{
 			QtGraphNode* nextNode = findNextNode(m_focusEdge, direction);
 			if (nextNode)

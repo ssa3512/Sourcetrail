@@ -339,6 +339,7 @@ void QtGraphView::rebuildGraph(
 			activeNodeCount += nodes[i]->getActiveSubNodeCount();
 		}
 
+		Id oldActiveTokenId = m_oldActiveNode ? m_oldActiveNode->getTokenId() : 0;
 		m_nodes.clear();
 		m_activeNodes.clear();
 		m_oldActiveNode = nullptr;
@@ -354,8 +355,15 @@ void QtGraphView::rebuildGraph(
 			}
 		}
 
+		if (m_activeNodes.size() == 1)
+		{
+			m_oldActiveNode = m_activeNodes.front();
+		}
+
+		Id newActiveTokenId = m_oldActiveNode ? m_oldActiveNode->getTokenId() : 0;
+
 		// focus previously focused node
-		m_focusHandler.refocusNode(m_nodes);
+		m_focusHandler.refocusNode(m_nodes, oldActiveTokenId, newActiveTokenId);
 
 		// move graph to center
 		QPointF center = itemsBoundingRect(m_nodes).center();
@@ -977,15 +985,10 @@ void QtGraphView::switchToNewGraphData()
 		{
 			centerNode(m_activeNodes.front());
 		}
-
-		if (m_activeNodes.size() == 1)
-		{
-			m_oldActiveNode = m_activeNodes.front();
-		}
 		m_activeNodes.clear();
 	}
 
-	if (hasFocus())
+	// if (hasFocus())
 	{
 		m_focusHandler.focusInitialNode();
 	}
