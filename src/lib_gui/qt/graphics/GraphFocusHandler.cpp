@@ -71,6 +71,9 @@ void GraphFocusHandler::focusInitialNode()
 
 void GraphFocusHandler::refocusNode(const std::list<QtGraphNode*>& newNodes)
 {
+	m_focusNode = nullptr;
+	m_focusEdge = nullptr;
+
 	if (m_lastFocusId)
 	{
 		QtGraphNode* nodeToFocus = QtGraphNode::findNodeRecursive(newNodes, m_lastFocusId);

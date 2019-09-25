@@ -4,7 +4,6 @@
 #include "Node.h"
 #include "QtGraphNode.h"
 
-class GraphFocusHandler;
 class QtCountCircleItem;
 
 class QtGraphNodeBundle
@@ -28,7 +27,6 @@ protected:
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	GraphFocusHandler* m_focusHandler;
 	QtCountCircleItem* m_circle;
 	Id m_tokenId;
 	NodeType m_type;

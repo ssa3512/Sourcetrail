@@ -3,7 +3,6 @@
 
 #include "QtGraphNode.h"
 
-class GraphFocusHandler;
 class FilePath;
 
 class QtGraphNodeData
@@ -31,8 +30,6 @@ protected:
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	GraphFocusHandler* m_focusHandler;
-
 	const Node* m_data;
 	bool m_childVisible;
 	bool m_hasQualifier;

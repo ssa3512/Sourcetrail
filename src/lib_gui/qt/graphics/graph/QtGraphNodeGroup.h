@@ -4,7 +4,6 @@
 #include "GroupType.h"
 #include "QtGraphNode.h"
 
-class GraphFocusHandler;
 class QGraphicsPolygonItem;
 class QPainterPath;
 
@@ -26,13 +25,10 @@ public:
 	virtual QPainterPath shape() const;
 
 protected:
-	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
 	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-	GraphFocusHandler* m_focusHandler;
-
 	Id m_tokenId;
 	GroupType m_type;
 

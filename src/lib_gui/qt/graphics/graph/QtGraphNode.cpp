@@ -7,17 +7,18 @@
 #include <QGraphicsSceneEvent>
 #include <QPen>
 
-#include "QtRoundedRectItem.h"
-#include "QtDeviceScaledPixmap.h"
-#include "utilityQt.h"
-#include "QtGraphNodeComponent.h"
-#include "QtGraphEdge.h"
-#include "QtGraphNodeExpandToggle.h"
+#include "GraphFocusHandler.h"
 #include "MessageCodeShowDefinition.h"
 #include "MessageGraphNodeHide.h"
 #include "MessageGraphNodeMove.h"
+#include "QtDeviceScaledPixmap.h"
+#include "QtGraphEdge.h"
+#include "QtGraphNodeComponent.h"
+#include "QtGraphNodeExpandToggle.h"
+#include "QtRoundedRectItem.h"
 #include "ResourcePaths.h"
 #include "utilityString.h"
+#include "utilityQt.h"
 
 void QtGraphNode::blendIn()
 {
@@ -58,7 +59,8 @@ QtGraphNode* QtGraphNode::findNodeRecursive(const std::list<QtGraphNode*>& nodes
 	return nullptr;
 }
 
-QtGraphNode::QtGraphNode()
+QtGraphNode::QtGraphNode(GraphFocusHandler* focusHandler)
+	: m_focusHandler(focusHandler)
 {
 	this->setPen(QPen(Qt::transparent));
 	this->setCursor(Qt::PointingHandCursor);
@@ -264,11 +266,35 @@ void QtGraphNode::setIsFocused(bool focused)
 	if (m_isFocused != focused)
 	{
 		m_isFocused = focused;
-		updateStyle();
+
+		if (focused)
+		{
+			coFocusIn();
+		}
+		else
+		{
+			coFocusOut();
+		}
 	}
 }
 
 void QtGraphNode::focusIn()
+{
+	if (m_focusHandler)
+	{
+		m_focusHandler->focusNode(this);
+	}
+}
+
+void QtGraphNode::focusOut()
+{
+	if (m_focusHandler)
+	{
+		m_focusHandler->defocusNode(this);
+	}
+}
+
+void QtGraphNode::coFocusIn()
 {
 	m_isCoFocused = true;
 
@@ -285,7 +311,7 @@ void QtGraphNode::focusIn()
 	updateStyle();
 }
 
-void QtGraphNode::focusOut()
+void QtGraphNode::coFocusOut()
 {
 	m_isCoFocused = false;
 

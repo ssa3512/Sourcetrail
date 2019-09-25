@@ -10,13 +10,12 @@
 #include "MessageFocusIn.h"
 #include "MessageFocusOut.h"
 #include "MessageGraphNodeBundleSplit.h"
-#include "GraphFocusHandler.h"
 #include "QtRoundedRectItem.h"
 
 QtGraphNodeGroup::QtGraphNodeGroup(
 	GraphFocusHandler* focusHandler, Id tokenId, const std::wstring& name, GroupType type, bool interactive
 )
-	: m_focusHandler(focusHandler)
+	: QtGraphNode(focusHandler)
 	, m_tokenId(tokenId)
 	, m_type(type)
 {
@@ -116,22 +115,14 @@ QPainterPath QtGraphNodeGroup::shape() const
 	return m_path;
 }
 
-void QtGraphNodeGroup::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
-{
-	m_focusHandler->focusNode(this);
-}
-
 void QtGraphNodeGroup::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
-	m_focusHandler->defocusNode(this);
 	if (m_type == GroupType::FILE || m_type == GroupType::NAMESPACE)
 	{
 		MessageFocusOut({ m_tokenId }).dispatch();
 	}
-	else
-	{
-		focusOut();
-	}
+
+	focusOut();
 }
 
 void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
@@ -144,10 +135,8 @@ void QtGraphNodeGroup::hoverMoveEvent(QGraphicsSceneHoverEvent* event)
 			{
 				MessageFocusIn({ m_tokenId }, TOOLTIP_ORIGIN_GRAPH).dispatch();
 			}
-			else
-			{
-				focusIn();
-			}
+
+			focusIn();
 		}
 	}
 	else if (m_isCoFocused)

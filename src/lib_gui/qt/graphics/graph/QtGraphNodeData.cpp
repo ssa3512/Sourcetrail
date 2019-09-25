@@ -20,7 +20,7 @@ QtGraphNodeData::QtGraphNodeData(
 	bool hasQualifier,
 	bool isInteractive
 )
-	: m_focusHandler(focusHandler)
+	: QtGraphNode(focusHandler)
 	, m_data(data)
 	, m_childVisible(childVisible)
 	, m_hasQualifier(hasQualifier)
@@ -92,9 +92,10 @@ void QtGraphNodeData::updateStyle()
 
 void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
-	m_focusHandler->focusNode(this);
-	MessageFocusIn(std::vector<Id>(1, m_data->getId()), TOOLTIP_ORIGIN_GRAPH).dispatch();
+	focusIn();
+	MessageFocusIn({ m_data->getId() }, TOOLTIP_ORIGIN_GRAPH).dispatch();
 
+	// case for legend
 	if (!m_isInteractive)
 	{
 		TooltipInfo info;
@@ -118,6 +119,6 @@ void QtGraphNodeData::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 
 void QtGraphNodeData::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
-	m_focusHandler->defocusNode(this);
-	MessageFocusOut(std::vector<Id>(1, m_data->getId())).dispatch();
+	focusOut();
+	MessageFocusOut({ m_data->getId() }).dispatch();
 }

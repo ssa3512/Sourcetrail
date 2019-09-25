@@ -6,13 +6,11 @@
 #include "GraphViewStyle.h"
 #include "MessageGraphNodeBundleSplit.h"
 #include "QtCountCircleItem.h"
-#include "GraphFocusHandler.h"
 
 QtGraphNodeBundle::QtGraphNodeBundle(
 	GraphFocusHandler* focusHandler, Id tokenId, size_t nodeCount, NodeType type, std::wstring name, bool interactive
 )
-	: QtGraphNode()
-	, m_focusHandler(focusHandler)
+	: QtGraphNode(focusHandler)
 	, m_tokenId(tokenId)
 	, m_type(type)
 {
@@ -83,12 +81,10 @@ void QtGraphNodeBundle::updateStyle()
 
 void QtGraphNodeBundle::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
-	m_focusHandler->focusNode(this);
 	focusIn();
 }
 
 void QtGraphNodeBundle::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
-	m_focusHandler->defocusNode(this);
 	focusOut();
 }

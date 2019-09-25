@@ -447,7 +447,7 @@ void QtGraphView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
 			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
 			if (node)
 			{
-				node->focusIn();
+				node->coFocusIn();
 				continue;
 			}
 
@@ -472,7 +472,7 @@ void QtGraphView::defocusTokenIds(const std::vector<Id>& defocusedTokenIds)
 			QtGraphNode* node = QtGraphNode::findNodeRecursive(m_oldNodes, tokenId);
 			if (node && node->isFocusable())
 			{
-				node->focusOut();
+				node->coFocusOut();
 				continue;
 			}
 
@@ -539,7 +539,6 @@ void QtGraphView::activateEdge(Id edgeId)
 			for (QtGraphEdge* edge : m_oldEdges)
 			{
 				edge->setIsActive(false);
-				edge->setIsCoFocused(false);
 			}
 
 			for (QtGraphEdge* edge : m_oldEdges)
@@ -671,8 +670,6 @@ void QtGraphView::clickedInEmptySpace()
 		{
 			activeEdges.push_back(edge);
 		}
-
-		edge->setIsCoFocused(false);
 	}
 
 	if (m_graph && m_graph->getTrailMode() != Graph::TRAIL_NONE)
@@ -965,13 +962,14 @@ void QtGraphView::switchToNewGraphData()
 		updateScrollBars();
 	}
 
-	// Manually hover the item below the mouse cursor.
 	QtGraphicsView* view = getView();
-	QtGraphNode* node = view->getNodeAtCursorPosition();
-	if (node)
-	{
-		node->hoverEnter();
-	}
+
+	// // Manually hover the item below the mouse cursor.
+	// QtGraphNode* node = view->getNodeAtCursorPosition();
+	// if (node)
+	// {
+	// 	node->hoverEnter();
+	// }
 
 	if (m_activeNodes.size())
 	{

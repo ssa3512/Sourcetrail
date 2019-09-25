@@ -9,6 +9,7 @@
 
 #include "GraphViewStyle.h"
 
+class GraphFocusHandler;
 class QFont;
 class QtGraphEdge;
 class QtRoundedRectItem;
@@ -33,7 +34,7 @@ public slots:
 public:
 	static QtGraphNode* findNodeRecursive(const std::list<QtGraphNode*>& nodes, Id tokenId);
 
-	QtGraphNode();
+	QtGraphNode(GraphFocusHandler* focusHandler = nullptr);
 	virtual ~QtGraphNode();
 
 	QtGraphNode* getParent() const;
@@ -80,6 +81,8 @@ public:
 	void setIsFocused(bool focused);
 	void focusIn();
 	void focusOut();
+	void coFocusIn();
+	void coFocusOut();
 
 	void showNodeRecursive();
 
@@ -144,6 +147,8 @@ protected:
 	bool m_isInteractive = false;
 
 private:
+	GraphFocusHandler* m_focusHandler;
+
 	std::list<std::shared_ptr<QtGraphNodeComponent>> m_components;
 
 	// Name match
