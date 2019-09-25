@@ -572,7 +572,7 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfTextNode(int fontSizeDiff)
 	return style;
 }
 
-GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bool isFocused, bool isCoFocused)
+GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bool isCoFocused)
 {
 	NodeStyle style;
 
@@ -614,11 +614,6 @@ GraphViewStyle::NodeStyle GraphViewStyle::getStyleOfGroupNode(GroupType type, bo
 
 	style.textOffset.x = 12;
 	style.textOffset.y = 5;
-
-	if (isFocused)
-	{
-		style.color.border = getFocusColor();
-	}
 
 	return style;
 }

@@ -41,7 +41,7 @@ QtGraphNodeGroup::QtGraphNodeGroup(
 	m_background = new QGraphicsPolygonItem(this);
 	m_background->setZValue(-3.f);
 
-	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(type, false, false);
+	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(type, false);
 	GraphViewStyle::NodeMargins margins = GraphViewStyle::getMarginsOfGroupNode(type, true);
 
 	int width = style.textOffset.x * 2 + style.borderWidth + margins.charWidth * name.size();
@@ -94,12 +94,17 @@ void QtGraphNodeGroup::onClick()
 
 void QtGraphNodeGroup::updateStyle()
 {
-	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isFocused, m_isCoFocused);
+	GraphViewStyle::NodeStyle style = GraphViewStyle::getStyleOfGroupNode(m_type, m_isCoFocused);
 
 	if (m_background)
 	{
 		m_background->setBrush(QColor(style.color.border.c_str()));
 		m_background->setPen(QPen(Qt::transparent));
+	}
+
+	if (m_isFocused)
+	{
+		style.color.border = GraphViewStyle::getFocusColor();
 	}
 
 	setStyle(style);

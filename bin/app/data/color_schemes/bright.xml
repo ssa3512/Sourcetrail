@@ -229,7 +229,7 @@
 
 	<graph>
 		<background>white</background>
-		<focus>red</focus>
+		<focus>#FF3826</focus>
 
 		<node>
 			<default>
