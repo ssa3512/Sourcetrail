@@ -348,7 +348,10 @@ Id QtCodeNavigator::getFocusedLocationId() const
 
 void QtCodeNavigator::setFocusedLocationId(Id locationId)
 {
-	m_focusedLocationId = locationId;
+	if (locationId)
+	{
+		m_focusedLocationId = locationId;
+	}
 }
 
 std::wstring QtCodeNavigator::getErrorMessageForId(Id errorId) const

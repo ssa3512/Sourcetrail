@@ -162,7 +162,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		switch (annotation.locationType)
 		{
 		case LOCATION_LOCAL_SYMBOL:
-			if (annotation.isActive || annotation.isCoFocused)
+			if (annotation.isActive || annotation.isFocused || annotation.isCoFocused)
 			{
 				focus = true;
 			}
@@ -171,7 +171,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		case LOCATION_ERROR:
 		case LOCATION_FULLTEXT_SEARCH:
 		case LOCATION_SCREEN_SEARCH:
-			if (annotation.isCoFocused || annotation.isActive)
+			if (annotation.isActive || annotation.isFocused || annotation.isCoFocused)
 			{
 				focus = true;
 			}
@@ -199,7 +199,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 			{
 				active = true;
 			}
-			else if (annotation.isCoFocused)
+			else if (annotation.isFocused || annotation.isCoFocused)
 			{
 				focus = true;
 			}
@@ -832,16 +832,17 @@ void QtCodeArea::annotateText()
 	const std::set<Id>& activeLocationIds =
 		utility::concat(m_navigator->getCurrentActiveLocationIds(), m_navigator->getCurrentActiveLocalLocationIds());
 
-	std::set<Id> focusedSymbolIds = m_navigator->getActiveTokenIds();
-	utility::append(focusedSymbolIds, m_navigator->getActiveLocalTokenIds());
+	std::set<Id> coFocusedSymbolIds = m_navigator->getActiveTokenIds();
+	utility::append(coFocusedSymbolIds, m_navigator->getActiveLocalTokenIds());
 
 	for (Id currentActiveId : activeSymbolIds)
 	{
-		focusedSymbolIds.erase(currentActiveId);
+		coFocusedSymbolIds.erase(currentActiveId);
 	}
-	utility::append(focusedSymbolIds, m_navigator->getCoFocusedTokenIds());
+	utility::append(coFocusedSymbolIds, m_navigator->getCoFocusedTokenIds());
 
-	bool needsUpdate = QtCodeField::annotateText(activeSymbolIds, activeLocationIds, focusedSymbolIds);
+	bool needsUpdate = QtCodeField::annotateText(
+		activeSymbolIds, activeLocationIds, coFocusedSymbolIds, m_navigator->getFocusedLocationId());
 	if (needsUpdate)
 	{
 		m_lineNumberArea->update();

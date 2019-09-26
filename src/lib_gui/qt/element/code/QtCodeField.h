@@ -88,7 +88,8 @@ protected:
 	};
 
 	bool annotateText(
-		const std::set<Id>& activeSymbolIds, const std::set<Id>& activeLocationIds, const std::set<Id>& focusedSymbolIds);
+		const std::set<Id>& activeSymbolIds, const std::set<Id>& activeLocationIds, const std::set<Id>& focusedSymbolIds,
+		Id focusedLocationId);
 
 	void createAnnotations(std::shared_ptr<SourceLocationFile> locationFile);
 	void activateAnnotations(const std::vector<const Annotation*>& annotations);
