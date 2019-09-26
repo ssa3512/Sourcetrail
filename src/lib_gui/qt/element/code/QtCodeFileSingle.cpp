@@ -208,6 +208,14 @@ void QtCodeFileSingle::findScreenMatches(const std::wstring& query, std::vector<
 	}
 }
 
+void QtCodeFileSingle::focusLine(QtCodeArea* area, size_t line)
+{
+	if (m_area == area)
+	{
+		area->focusLine(line);
+	}
+}
+
 const FilePath& QtCodeFileSingle::getCurrentFilePath() const
 {
 	return m_currentFilePath;

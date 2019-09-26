@@ -90,6 +90,8 @@ public:
 
 	void ensureLocationIdVisible(Id locationId, int parentWidth, bool animated);
 
+	bool focusLine(size_t lineNumber);
+
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
 	virtual void mouseReleaseEvent(QMouseEvent* event) override;

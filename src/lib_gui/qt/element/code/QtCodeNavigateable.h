@@ -31,6 +31,8 @@ public:
 
 	virtual void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches) = 0;
 
+	virtual void focusLine(QtCodeArea* area, size_t line) = 0;
+
 protected:
 	void ensureWidgetVisibleAnimated(
 		const QWidget* parentWidget, const QWidget *childWidget, QRectF rect, bool animated, CodeScrollParams::Target target);

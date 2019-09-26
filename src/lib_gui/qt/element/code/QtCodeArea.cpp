@@ -573,6 +573,27 @@ void QtCodeArea::ensureLocationIdVisible(Id locationId, int parentWidth, bool an
 	}
 }
 
+bool QtCodeArea::focusLine(size_t lineNumber)
+{
+	if (lineNumber >= getStartLineNumber() && lineNumber <= getEndLineNumber())
+	{
+		Id locationId = 0;
+
+		std::vector<const Annotation*> annotations = getInteractiveAnnotationsForLineNumber(lineNumber);
+		if (annotations.size())
+		{
+			locationId = annotations.front()->locationId;
+		}
+
+		m_linesToRehighlight.push_back(lineNumber);
+		m_navigator->setFocusedLocationId(this, lineNumber, locationId);
+
+		return true;
+	}
+
+	return false;
+}
+
 void QtCodeArea::resizeEvent(QResizeEvent *e)
 {
 	QPlainTextEdit::resizeEvent(e);

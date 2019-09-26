@@ -599,6 +599,8 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_K:
 		case Qt::Key_W:
 			std::cout << "up" << std::endl;
+			m_current->focusLine(m_focusedCodeArea, m_focusedLineNumber - 1);
+			updateFiles();
 			// m_focusHandler->focusNext(GraphFocusHandler::Direction::UP, shiftKeyDown);
 			break;
 
@@ -606,6 +608,8 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_J:
 		case Qt::Key_S:
 			std::cout << "down" << std::endl;
+			m_current->focusLine(m_focusedCodeArea, m_focusedLineNumber + 1);
+			updateFiles();
 			// m_focusHandler->focusNext(GraphFocusHandler::Direction::DOWN, shiftKeyDown);
 			break;
 

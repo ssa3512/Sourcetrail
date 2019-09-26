@@ -381,7 +381,7 @@ bool QtCodeField::annotateText(
 			}
 		}
 
-		if (wasActive != annotation.isActive || wasFocused != annotation.isCoFocused || wasCoFocused != annotation.isCoFocused)
+		if (wasActive != annotation.isActive || wasFocused != annotation.isFocused || wasCoFocused != annotation.isCoFocused)
 		{
 			m_linesToRehighlight.push_back(annotation.startLine - m_startLineNumber);
 		}
@@ -702,6 +702,24 @@ void QtCodeField::setTextColorForAnnotation(const Annotation& annotation, QColor
 	QTextCharFormat format;
 	format.setForeground(color);
 	m_highlighter->applyFormat(annotation.start, annotation.end, format);
+}
+
+std::vector<const QtCodeField::Annotation*> QtCodeField::getInteractiveAnnotationsForLineNumber(size_t lineNumber) const
+{
+	std::vector<const QtCodeField::Annotation*> annotations;
+
+	for (const Annotation& annotation : m_annotations)
+	{
+		const LocationType& type = annotation.locationType;
+		if ((type == LOCATION_TOKEN || type == LOCATION_QUALIFIER || type == LOCATION_LOCAL_SYMBOL
+			|| type == LOCATION_UNSOLVED || type == LOCATION_ERROR)
+			&& lineNumber >= annotation.startLine && lineNumber <= annotation.endLine)
+		{
+			annotations.push_back(&annotation);
+		}
+	}
+
+	return annotations;
 }
 
 std::vector<const QtCodeField::Annotation*> QtCodeField::getInteractiveAnnotationsForPosition(QPoint position) const

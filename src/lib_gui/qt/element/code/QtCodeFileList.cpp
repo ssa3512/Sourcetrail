@@ -288,6 +288,10 @@ void QtCodeFileList::findScreenMatches(const std::wstring& query, std::vector<st
 	}
 }
 
+void QtCodeFileList::focusLine(QtCodeArea* area, size_t line)
+{
+}
+
 void QtCodeFileList::maximizeFirstFile()
 {
 	if (m_files.size())
