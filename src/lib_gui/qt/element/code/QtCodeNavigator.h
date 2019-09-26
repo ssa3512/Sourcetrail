@@ -74,7 +74,8 @@ public:
 	void setCoFocusedTokenIds(const std::vector<Id>& coFocusedTokenIds);
 
 	Id getFocusedLocationId() const;
-	void setFocusedLocationId(Id locationId);
+	size_t getFocusedLineNumber(QtCodeArea* area) const;
+	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
 
 	std::wstring getErrorMessageForId(Id errorId) const;
 	void setErrorInfos(const std::vector<ErrorInfo>& errorInfos);
@@ -140,7 +141,11 @@ private:
 	std::set<Id> m_activeTokenIds;
 	std::set<Id> m_activeLocalTokenIds;
 	std::set<Id> m_coFocusedTokenIds;
+
+	QtCodeArea* m_focusedCodeArea = nullptr;
+	size_t m_focusedLineNumber = 0;
 	Id m_focusedLocationId = 0;
+
 	std::map<Id, ErrorInfo> m_errorInfos;
 
 	QtSearchBarButton* m_prevReferenceButton;

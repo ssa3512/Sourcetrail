@@ -240,6 +240,8 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		drawAreaBottom = height() - horizontalScrollBar()->height();
 	}
 
+	size_t focusedLineNumber = m_navigator->getFocusedLineNumber(this);
+
 	while (block.isValid() && top <= drawAreaBottom)
 	{
 		if (block.isVisible() && bottom >= drawAreaTop)
@@ -249,7 +251,11 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 
 			p.setColor(textColor);
 
-			if (focusedLineNumbers.find(number) != focusedLineNumbers.end())
+			if (focusedLineNumber == number)
+			{
+				painter.fillRect(m_lineNumberArea->width() - 8, top, 3, height, "red");
+			}
+			else if (focusedLineNumbers.find(number) != focusedLineNumbers.end())
 			{
 				painter.fillRect(m_lineNumberArea->width() - 8, top, 3, height, focusedMarkerColor);
 			}
@@ -697,12 +703,10 @@ void QtCodeArea::mouseMoveEvent(QMouseEvent* event)
 
 		setHoveredAnnotations(annotations);
 
-		Id focusedLocationId = 0;
 		if (annotations.size())
 		{
-			focusedLocationId = annotations.front()->locationId;
+			m_navigator->setFocusedLocationId(this, annotations.front()->startLine, annotations.front()->locationId);
 		}
-		m_navigator->setFocusedLocationId(focusedLocationId);
 	}
 }
 

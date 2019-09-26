@@ -346,12 +346,20 @@ Id QtCodeNavigator::getFocusedLocationId() const
 	return m_focusedLocationId;
 }
 
-void QtCodeNavigator::setFocusedLocationId(Id locationId)
+size_t QtCodeNavigator::getFocusedLineNumber(QtCodeArea* area) const
 {
-	if (locationId)
+	if (m_focusedCodeArea == area)
 	{
-		m_focusedLocationId = locationId;
+		return m_focusedLineNumber;
 	}
+	return 0;
+}
+
+void QtCodeNavigator::setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId)
+{
+	m_focusedCodeArea = area;
+	m_focusedLineNumber = lineNumber;
+	m_focusedLocationId = locationId;
 }
 
 std::wstring QtCodeNavigator::getErrorMessageForId(Id errorId) const
