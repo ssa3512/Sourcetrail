@@ -346,22 +346,22 @@ bool QtCodeField::annotateText(
 	{
 		Annotation& annotation = m_annotations[i];
 		bool wasActive = annotation.isActive;
-		bool wasFocused = annotation.isFocused;
+		bool wasFocused = annotation.isCoFocused;
 
 		annotation.isActive = (
 			utility::shareElement(activeSymbolIds, annotation.tokenIds) ||
 			activeLocationIds.find(annotation.locationId) != activeLocationIds.end()
 		);
 
-		annotation.isFocused = utility::shareElement(focusedSymbolIds, annotation.tokenIds);
+		annotation.isCoFocused = utility::shareElement(focusedSymbolIds, annotation.tokenIds);
 
 		if (annotation.locationType == LOCATION_QUALIFIER)
 		{
 			// never show qualifier locations active
 			annotation.isActive = false;
 
-			// only show qualifiers focused when mouse over
-			if (annotation.isFocused)
+			// only show qualifiers cofocused when mouse over
+			if (annotation.isCoFocused)
 			{
 				bool isHovered = false;
 				for (const Annotation* a : m_hoveredAnnotations)
@@ -371,11 +371,11 @@ bool QtCodeField::annotateText(
 						isHovered = true;
 					}
 				}
-				annotation.isFocused = isHovered;
+				annotation.isCoFocused = isHovered;
 			}
 		}
 
-		if (wasFocused != annotation.isFocused || wasActive != annotation.isActive)
+		if (wasFocused != annotation.isCoFocused || wasActive != annotation.isActive)
 		{
 			m_linesToRehighlight.push_back(annotation.startLine - m_startLineNumber);
 		}
@@ -456,9 +456,6 @@ void QtCodeField::createAnnotations(std::shared_ptr<SourceLocationFile> location
 			annotation.tokenIds.insert(location->getTokenIds().begin(), location->getTokenIds().end());
 			annotation.locationId = location->getLocationId();
 			annotation.locationType = location->getType();
-
-			annotation.isActive = false;
-			annotation.isFocused = false;
 
 			m_annotations.push_back(annotation);
 		}
@@ -686,7 +683,7 @@ const QtCodeField::AnnotationColor& QtCodeField::getAnnotationColorForAnnotation
 	{
 		i += 2;
 	}
-	else if (annotation.isFocused)
+	else if (annotation.isCoFocused)
 	{
 		i += 1;
 	}

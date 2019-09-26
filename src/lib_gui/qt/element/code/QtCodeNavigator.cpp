@@ -220,7 +220,7 @@ void QtCodeNavigator::clear()
 	m_currentActiveTokenIds.clear();
 	m_activeTokenIds.clear();
 	m_activeLocalTokenIds.clear();
-	m_focusedTokenIds.clear();
+	m_coFocusedTokenIds.clear();
 	m_errorInfos.clear();
 
 	updateReferenceCount(0, 0, 0, 0);
@@ -331,14 +331,24 @@ void QtCodeNavigator::setActiveLocalTokenIds(const std::vector<Id>& activeLocalT
 	m_activeLocalTokenIds = std::set<Id>(activeLocalTokenIds.begin(), activeLocalTokenIds.end());
 }
 
-const std::set<Id>& QtCodeNavigator::getFocusedTokenIds() const
+const std::set<Id>& QtCodeNavigator::getCoFocusedTokenIds() const
 {
-	return m_focusedTokenIds;
+	return m_coFocusedTokenIds;
 }
 
-void QtCodeNavigator::setFocusedTokenIds(const std::vector<Id>& focusedTokenIds)
+void QtCodeNavigator::setCoFocusedTokenIds(const std::vector<Id>& coFocusedTokenIds)
 {
-	m_focusedTokenIds = std::set<Id>(focusedTokenIds.begin(), focusedTokenIds.end());
+	m_coFocusedTokenIds = std::set<Id>(coFocusedTokenIds.begin(), coFocusedTokenIds.end());
+}
+
+Id QtCodeNavigator::getFocusedLocationId() const
+{
+	return m_focusedLocationId;
+}
+
+void QtCodeNavigator::setFocusedLocationId(Id locationId)
+{
+	m_focusedLocationId = locationId;
 }
 
 std::wstring QtCodeNavigator::getErrorMessageForId(Id errorId) const
@@ -392,15 +402,15 @@ bool QtCodeNavigator::hasSingleFileCached(const FilePath& filePath) const
 	return m_single->hasFileCached(filePath);
 }
 
-void QtCodeNavigator::focusTokenIds(const std::vector<Id>& focusedTokenIds)
+void QtCodeNavigator::coFocusTokenIds(const std::vector<Id>& coFocusedTokenIds)
 {
-	setFocusedTokenIds(focusedTokenIds);
+	setCoFocusedTokenIds(coFocusedTokenIds);
 	updateFiles();
 }
 
-void QtCodeNavigator::defocusTokenIds()
+void QtCodeNavigator::deCoFocusTokenIds()
 {
-	setFocusedTokenIds({ });
+	setCoFocusedTokenIds({ });
 	updateFiles();
 }
 

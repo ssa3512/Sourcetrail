@@ -39,8 +39,8 @@ public:
 
 	bool showsErrors() const override;
 
-	void focusTokenIds(const std::vector<Id>& focusedTokenIds) override;
-	void defocusTokenIds() override;
+	void coFocusTokenIds(const std::vector<Id>& coFocusedTokenIds) override;
+	void deCoFocusTokenIds() override;
 
 	bool isInListMode() const override;
 	void setMode(bool listMode) override;

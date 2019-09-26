@@ -200,19 +200,19 @@ void QtCodeView::scrollTo(const CodeScrollParams params, bool animated)
 	});
 }
 
-void QtCodeView::focusTokenIds(const std::vector<Id>& focusedTokenIds)
+void QtCodeView::coFocusTokenIds(const std::vector<Id>& coFocusedTokenIds)
 {
 	m_onQtThread([=]()
 	{
-		m_widget->focusTokenIds(focusedTokenIds);
+		m_widget->coFocusTokenIds(coFocusedTokenIds);
 	});
 }
 
-void QtCodeView::defocusTokenIds()
+void QtCodeView::deCoFocusTokenIds()
 {
 	m_onQtThread([=]()
 	{
-		m_widget->defocusTokenIds();
+		m_widget->deCoFocusTokenIds();
 	});
 }
 

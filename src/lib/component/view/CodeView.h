@@ -66,8 +66,8 @@ public:
 
 	virtual bool showsErrors() const = 0;
 
-	virtual void focusTokenIds(const std::vector<Id>& focusedTokenIds) = 0;
-	virtual void defocusTokenIds() = 0;
+	virtual void coFocusTokenIds(const std::vector<Id>& coFocusedTokenIds) = 0;
+	virtual void deCoFocusTokenIds() = 0;
 
 	virtual bool isInListMode() const = 0;
 	virtual void setMode(bool listMode) = 0;

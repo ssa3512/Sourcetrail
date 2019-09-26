@@ -70,8 +70,11 @@ public:
 	const std::set<Id>& getActiveLocalTokenIds() const;
 	void setActiveLocalTokenIds(const std::vector<Id>& activeLocalTokenIds, LocationType locationType);
 
-	const std::set<Id>& getFocusedTokenIds() const;
-	void setFocusedTokenIds(const std::vector<Id>& focusedTokenIds);
+	const std::set<Id>& getCoFocusedTokenIds() const;
+	void setCoFocusedTokenIds(const std::vector<Id>& coFocusedTokenIds);
+
+	Id getFocusedLocationId() const;
+	void setFocusedLocationId(Id locationId);
 
 	std::wstring getErrorMessageForId(Id errorId) const;
 	void setErrorInfos(const std::vector<ErrorInfo>& errorInfos);
@@ -82,8 +85,8 @@ public:
 	bool isInListMode() const;
 	bool hasSingleFileCached(const FilePath& filePath) const;
 
-	void focusTokenIds(const std::vector<Id>& focusedTokenIds);
-	void defocusTokenIds();
+	void coFocusTokenIds(const std::vector<Id>& coFocusedTokenIds);
+	void deCoFocusTokenIds();
 
 	void updateFiles();
 
@@ -136,7 +139,8 @@ private:
 
 	std::set<Id> m_activeTokenIds;
 	std::set<Id> m_activeLocalTokenIds;
-	std::set<Id> m_focusedTokenIds;
+	std::set<Id> m_coFocusedTokenIds;
+	Id m_focusedLocationId = 0;
 	std::map<Id, ErrorInfo> m_errorInfos;
 
 	QtSearchBarButton* m_prevReferenceButton;

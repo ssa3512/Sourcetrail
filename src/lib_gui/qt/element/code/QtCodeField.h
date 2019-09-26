@@ -61,22 +61,23 @@ protected:
 
 	struct Annotation
 	{
-		int startLine;
-		int endLine;
+		int startLine = 0;
+		int endLine = 0;
 
-		int startCol;
-		int endCol;
+		int startCol = 0;
+		int endCol = 0;
 
-		int start;
-		int end;
+		int start = 0;
+		int end = 0;
 
 		std::set<Id> tokenIds;
-		Id locationId;
+		Id locationId = 0;
 
-		LocationType locationType;
+		LocationType locationType = LOCATION_TOKEN;
 
-		bool isActive;
-		bool isFocused;
+		bool isActive = false;
+		bool isFocused = false;
+		bool isCoFocused = false;
 	};
 
 	struct AnnotationColor

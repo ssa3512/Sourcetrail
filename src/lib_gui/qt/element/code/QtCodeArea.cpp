@@ -162,7 +162,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		switch (annotation.locationType)
 		{
 		case LOCATION_LOCAL_SYMBOL:
-			if (annotation.isActive || annotation.isFocused)
+			if (annotation.isActive || annotation.isCoFocused)
 			{
 				focus = true;
 			}
@@ -171,7 +171,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		case LOCATION_ERROR:
 		case LOCATION_FULLTEXT_SEARCH:
 		case LOCATION_SCREEN_SEARCH:
-			if (annotation.isFocused || annotation.isActive)
+			if (annotation.isCoFocused || annotation.isActive)
 			{
 				focus = true;
 			}
@@ -188,7 +188,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 				focus = true;
 				break;
 			}
-			else if (annotation.isFocused && utility::shareElement(activeSymbolIds, annotation.tokenIds))
+			else if (annotation.isCoFocused && utility::shareElement(activeSymbolIds, annotation.tokenIds))
 			{
 				active = true;
 				break;
@@ -199,7 +199,7 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 			{
 				active = true;
 			}
-			else if (annotation.isFocused)
+			else if (annotation.isCoFocused)
 			{
 				focus = true;
 			}
@@ -394,7 +394,7 @@ size_t QtCodeArea::getActiveLocationCount() const
 
 	for (const Annotation& annotation : m_annotations)
 	{
-		if (annotation.locationType == LocationType::LOCATION_TOKEN && (annotation.isActive || annotation.isFocused))
+		if (annotation.locationType == LocationType::LOCATION_TOKEN && (annotation.isActive || annotation.isCoFocused))
 		{
 			count++;
 		}
@@ -459,9 +459,6 @@ void QtCodeArea::findScreenMatches(const std::wstring& query, std::vector<std::p
 		// Set first 2 bits to 1 to avoid collisions
 		matchAnnotation.locationId = ~(~Id(0) >> 2) + screenMatches->size() + 1;
 		matchAnnotation.locationType = LOCATION_SCREEN_SEARCH;
-
-		matchAnnotation.isActive = false;
-		matchAnnotation.isFocused = false;
 
 		m_annotations.push_back(matchAnnotation);
 		screenMatches->push_back(std::make_pair(this, matchAnnotation.locationId));
@@ -699,6 +696,13 @@ void QtCodeArea::mouseMoveEvent(QMouseEvent* event)
 		QToolTip::hideText();
 
 		setHoveredAnnotations(annotations);
+
+		Id focusedLocationId = 0;
+		if (annotations.size())
+		{
+			focusedLocationId = annotations.front()->locationId;
+		}
+		m_navigator->setFocusedLocationId(focusedLocationId);
 	}
 }
 
@@ -835,7 +839,7 @@ void QtCodeArea::annotateText()
 	{
 		focusedSymbolIds.erase(currentActiveId);
 	}
-	utility::append(focusedSymbolIds, m_navigator->getFocusedTokenIds());
+	utility::append(focusedSymbolIds, m_navigator->getCoFocusedTokenIds());
 
 	bool needsUpdate = QtCodeField::annotateText(activeSymbolIds, activeLocationIds, focusedSymbolIds);
 	if (needsUpdate)
