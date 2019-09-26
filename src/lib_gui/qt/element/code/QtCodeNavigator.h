@@ -102,6 +102,7 @@ public slots:
 
 protected:
 	void showEvent(QShowEvent* event) override;
+	void keyPressEvent(QKeyEvent* event) override;
 
 private slots:
 	void previousReference();

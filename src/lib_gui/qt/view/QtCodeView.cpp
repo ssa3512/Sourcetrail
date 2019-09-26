@@ -236,12 +236,22 @@ void QtCodeView::focus()
 {
 	std::cout << "focus code" << std::endl;
 	m_hasFocus = true;
+
+	m_onQtThread([this]()
+	{
+		m_widget->setFocus();
+	});
 }
 
 void QtCodeView::defocus()
 {
 	std::cout << "defocus code" << std::endl;
 	m_hasFocus = false;
+
+	m_onQtThread([this]()
+	{
+		m_widget->clearFocus();
+	});
 }
 
 bool QtCodeView::hasFocus()

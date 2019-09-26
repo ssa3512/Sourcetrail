@@ -1,3 +1,4 @@
+
 #ifndef QT_CODE_FIELD_H
 #define QT_CODE_FIELD_H
 
@@ -30,7 +31,7 @@ public:
 
 	~QtCodeField();
 
-	virtual QSize sizeHint() const override;
+	QSize sizeHint() const override;
 
 	size_t getStartLineNumber() const;
 	size_t getEndLineNumber() const;
@@ -44,14 +45,16 @@ public:
 	void annotateText();
 
 protected:
-	virtual void paintEvent(QPaintEvent* event) override;
-	virtual void enterEvent(QEvent* event) override;
-	virtual void leaveEvent(QEvent* event) override;
+	void paintEvent(QPaintEvent* event) override;
+	void enterEvent(QEvent* event) override;
+	void leaveEvent(QEvent* event) override;
 
-	virtual void mouseMoveEvent(QMouseEvent* event) override;
-	virtual void mouseReleaseEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
-	virtual void contextMenuEvent(QContextMenuEvent* event) override;
+	void keyPressEvent(QKeyEvent* event) override;
+
+	void contextMenuEvent(QContextMenuEvent* event) override;
 
 	virtual void focusTokenIds(const std::vector<Id>& tokenIds);
 	virtual void defocusTokenIds(const std::vector<Id>& tokenIds);

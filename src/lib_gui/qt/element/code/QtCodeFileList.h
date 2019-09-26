@@ -15,6 +15,13 @@ class QtCodeFileTitleBar;
 class QtCodeNavigator;
 class QtCodeSnippet;
 
+class QtCodeFileListScrollArea
+	: public QScrollArea
+{
+protected:
+	void keyPressEvent(QKeyEvent* event) override;
+};
+
 class QtCodeFileList
 	: public QFrame
 	, public QtCodeNavigateable
@@ -64,7 +71,7 @@ private:
 	void updateLastSnippetScrollBar(QScrollBar* mirroredScrollBar);
 
 	QtCodeNavigator* m_navigator;
-	QScrollArea* m_scrollArea;
+	QtCodeFileListScrollArea* m_scrollArea;
 	QFrame* m_filesArea;
 
 	std::vector<QtCodeFile*> m_files;

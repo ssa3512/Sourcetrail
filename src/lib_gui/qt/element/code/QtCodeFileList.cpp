@@ -17,13 +17,29 @@
 #include "utilityQt.h"
 #include "ColorScheme.h"
 
+void QtCodeFileListScrollArea::keyPressEvent(QKeyEvent* event)
+{
+	switch (event->key())
+	{
+		case Qt::Key_Up:
+		case Qt::Key_Down:
+		case Qt::Key_Left:
+		case Qt::Key_Right:
+			QWidget::keyPressEvent(event);
+			return;
+	}
+
+	QScrollArea::keyPressEvent(event);
+}
+
+
 QtCodeFileList::QtCodeFileList(QtCodeNavigator* navigator)
 	: QFrame()
 	, m_navigator(navigator)
 	, m_mirroredTitleBar(nullptr)
 	, m_mirroredSnippetScrollBar(nullptr)
 {
-	m_scrollArea = new QScrollArea();
+	m_scrollArea = new QtCodeFileListScrollArea();
 
 	m_scrollArea->setObjectName("code_container");
 	m_scrollArea->setWidgetResizable(true);

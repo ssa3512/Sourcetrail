@@ -567,6 +567,60 @@ void QtCodeNavigator::showEvent(QShowEvent* event)
 	scrollTo(m_scrollParams, false);
 }
 
+#include <iostream>
+void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
+{
+	bool shiftKeyDown = event->modifiers() & Qt::ShiftModifier;
+
+	switch (event->key())
+	{
+		case Qt::Key_Up:
+		case Qt::Key_K:
+		case Qt::Key_W:
+			std::cout << "up" << std::endl;
+			// m_focusHandler->focusNext(GraphFocusHandler::Direction::UP, shiftKeyDown);
+			break;
+
+		case Qt::Key_Down:
+		case Qt::Key_J:
+		case Qt::Key_S:
+			std::cout << "down" << std::endl;
+			// m_focusHandler->focusNext(GraphFocusHandler::Direction::DOWN, shiftKeyDown);
+			break;
+
+		case Qt::Key_Left:
+		case Qt::Key_H:
+		case Qt::Key_A:
+			std::cout << "left" << std::endl;
+			// m_focusHandler->focusNext(GraphFocusHandler::Direction::LEFT, shiftKeyDown);
+			break;
+
+		case Qt::Key_Right:
+		case Qt::Key_L:
+		case Qt::Key_D:
+			std::cout << "right" << std::endl;
+			// m_focusHandler->focusNext(GraphFocusHandler::Direction::RIGHT, shiftKeyDown);
+			break;
+
+		case Qt::Key_E:
+		case Qt::Key_Return:
+			if (shiftKeyDown)
+			{
+				// m_focusHandler->expandFocus();
+			}
+			else
+			{
+				std::cout << "activate" << std::endl;
+				// m_focusHandler->activateFocus();
+			}
+			break;
+
+		default:
+			QWidget::keyPressEvent(event);
+			return;
+	}
+}
+
 void QtCodeNavigator::previousReference()
 {
 	MessageCodeReference(MessageCodeReference::REFERENCE_PREVIOUS, false).dispatch();
