@@ -51,7 +51,7 @@ public:
 
 	void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches) override;
 
-	void focusLine(QtCodeArea* area, size_t line) override;
+	void moveFocus(CodeFocusHandler::Direction direction, QtCodeArea* area, size_t lineNumber, Id locationId) override;
 
 	void maximizeFirstFile();
 

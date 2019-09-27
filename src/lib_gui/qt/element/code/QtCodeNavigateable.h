@@ -3,6 +3,7 @@
 
 #include <set>
 
+#include "CodeFocusHandler.h"
 #include "CodeScrollParams.h"
 #include "CodeSnippetParams.h"
 #include "types.h"
@@ -31,7 +32,7 @@ public:
 
 	virtual void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches) = 0;
 
-	virtual void focusLine(QtCodeArea* area, size_t line) = 0;
+	virtual void moveFocus(CodeFocusHandler::Direction direction, QtCodeArea* area, size_t lineNumber, Id locationId) = 0;
 
 protected:
 	void ensureWidgetVisibleAnimated(

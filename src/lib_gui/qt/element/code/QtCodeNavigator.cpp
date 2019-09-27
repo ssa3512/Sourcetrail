@@ -8,10 +8,10 @@
 #include <QVBoxLayout>
 
 #include "ApplicationSettings.h"
+#include "CodeFocusHandler.h"
 #include "logging.h"
 #include "MessageCodeReference.h"
 #include "MessageScrollCode.h"
-#include "MessageShowError.h"
 #include "QtCodeArea.h"
 #include "QtCodeFile.h"
 #include "QtCodeSnippet.h"
@@ -599,32 +599,32 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_K:
 		case Qt::Key_W:
 			std::cout << "up" << std::endl;
-			m_current->focusLine(m_focusedCodeArea, m_focusedLineNumber - 1);
+			m_current->moveFocus(CodeFocusHandler::Direction::UP, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
 			updateFiles();
-			// m_focusHandler->focusNext(GraphFocusHandler::Direction::UP, shiftKeyDown);
 			break;
 
 		case Qt::Key_Down:
 		case Qt::Key_J:
 		case Qt::Key_S:
 			std::cout << "down" << std::endl;
-			m_current->focusLine(m_focusedCodeArea, m_focusedLineNumber + 1);
+			m_current->moveFocus(CodeFocusHandler::Direction::DOWN, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
 			updateFiles();
-			// m_focusHandler->focusNext(GraphFocusHandler::Direction::DOWN, shiftKeyDown);
 			break;
 
 		case Qt::Key_Left:
 		case Qt::Key_H:
 		case Qt::Key_A:
 			std::cout << "left" << std::endl;
-			// m_focusHandler->focusNext(GraphFocusHandler::Direction::LEFT, shiftKeyDown);
+			m_current->moveFocus(CodeFocusHandler::Direction::LEFT, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			updateFiles();
 			break;
 
 		case Qt::Key_Right:
 		case Qt::Key_L:
 		case Qt::Key_D:
 			std::cout << "right" << std::endl;
-			// m_focusHandler->focusNext(GraphFocusHandler::Direction::RIGHT, shiftKeyDown);
+			m_current->moveFocus(CodeFocusHandler::Direction::RIGHT, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			updateFiles();
 			break;
 
 		case Qt::Key_E:

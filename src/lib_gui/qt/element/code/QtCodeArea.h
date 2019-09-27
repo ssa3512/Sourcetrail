@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "CodeFocusHandler.h"
 #include "QtCodeField.h"
 #include "QtScrollSpeedChangeListener.h"
 
@@ -90,7 +91,9 @@ public:
 
 	void ensureLocationIdVisible(Id locationId, int parentWidth, bool animated);
 
-	bool focusLine(size_t lineNumber);
+	bool moveFocus(CodeFocusHandler::Direction direction, size_t lineNumber, Id locationId);
+	bool moveFocusToLine(size_t lineNumber);
+	bool moveFocusInLine(size_t lineNumber, Id locationId, bool forward);
 
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;

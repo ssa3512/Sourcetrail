@@ -573,7 +573,24 @@ void QtCodeArea::ensureLocationIdVisible(Id locationId, int parentWidth, bool an
 	}
 }
 
-bool QtCodeArea::focusLine(size_t lineNumber)
+bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNumber, Id locationId)
+{
+	switch (direction)
+	{
+	case CodeFocusHandler::Direction::UP:
+		return moveFocusToLine(lineNumber - 1);
+	case CodeFocusHandler::Direction::DOWN:
+		return moveFocusToLine(lineNumber + 1);
+	case CodeFocusHandler::Direction::LEFT:
+		return moveFocusInLine(lineNumber, locationId, false);
+	case CodeFocusHandler::Direction::RIGHT:
+		return moveFocusInLine(lineNumber, locationId, true);
+	};
+
+	return false;
+}
+
+bool QtCodeArea::moveFocusToLine(size_t lineNumber)
 {
 	if (lineNumber >= getStartLineNumber() && lineNumber <= getEndLineNumber())
 	{
@@ -588,6 +605,47 @@ bool QtCodeArea::focusLine(size_t lineNumber)
 		m_linesToRehighlight.push_back(lineNumber);
 		m_navigator->setFocusedLocationId(this, lineNumber, locationId);
 
+		return true;
+	}
+
+	return false;
+}
+
+bool QtCodeArea::moveFocusInLine(size_t lineNumber, Id locationId, bool forward)
+{
+	const Annotation* target = nullptr;
+
+	for (const Annotation* annotation : getInteractiveAnnotationsForLineNumber(lineNumber))
+	{
+		if (annotation->locationId == locationId)
+		{
+			if (forward)
+			{
+				target = annotation;
+			}
+			else
+			{
+				break;
+			}
+		}
+		else if (forward)
+		{
+			if (target)
+			{
+				target = annotation;
+				break;
+			}
+		}
+		else
+		{
+			target = annotation;
+		}
+	}
+
+	if (target)
+	{
+		m_linesToRehighlight.push_back(lineNumber);
+		m_navigator->setFocusedLocationId(this, lineNumber, target->locationId);
 		return true;
 	}
 

@@ -288,7 +288,7 @@ void QtCodeFileList::findScreenMatches(const std::wstring& query, std::vector<st
 	}
 }
 
-void QtCodeFileList::focusLine(QtCodeArea* area, size_t line)
+void QtCodeFileList::moveFocus(CodeFocusHandler::Direction direction, QtCodeArea* area, size_t lineNumber, Id locationId)
 {
 }
 
