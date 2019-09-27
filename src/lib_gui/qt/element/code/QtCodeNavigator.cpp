@@ -629,14 +629,10 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 
 		case Qt::Key_E:
 		case Qt::Key_Return:
-			if (shiftKeyDown)
+			std::cout << "activate" << std::endl;
+			if (m_focusedCodeArea && m_focusedLocationId)
 			{
-				// m_focusHandler->expandFocus();
-			}
-			else
-			{
-				std::cout << "activate" << std::endl;
-				// m_focusHandler->activateFocus();
+				m_focusedCodeArea->activateLocationId(m_focusedLocationId);
 			}
 			break;
 

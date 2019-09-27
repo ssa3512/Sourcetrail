@@ -671,6 +671,22 @@ bool QtCodeArea::moveFocusInLine(size_t lineNumber, Id locationId, bool forward)
 	return false;
 }
 
+void QtCodeArea::activateLocationId(Id locationId)
+{
+	const Annotation* annotation = getAnnotationForLocationId(locationId);
+	if (annotation)
+	{
+		if (m_navigator->hasErrors())
+		{
+			activateErrors({ annotation });
+		}
+		else
+		{
+			activateAnnotations({ annotation });
+		}
+	}
+}
+
 void QtCodeArea::resizeEvent(QResizeEvent *e)
 {
 	QPlainTextEdit::resizeEvent(e);

@@ -94,6 +94,7 @@ public:
 	bool moveFocus(CodeFocusHandler::Direction direction, size_t lineNumber, Id locationId);
 	bool moveFocusToLine(size_t lineNumber, Id previousLocationId);
 	bool moveFocusInLine(size_t lineNumber, Id locationId, bool forward);
+	void activateLocationId(Id locationId);
 
 protected:
 	virtual void resizeEvent(QResizeEvent* event) override;
