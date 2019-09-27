@@ -578,9 +578,9 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	switch (direction)
 	{
 	case CodeFocusHandler::Direction::UP:
-		return moveFocusToLine(lineNumber - 1);
+		return moveFocusToLine(lineNumber - 1, locationId);
 	case CodeFocusHandler::Direction::DOWN:
-		return moveFocusToLine(lineNumber + 1);
+		return moveFocusToLine(lineNumber + 1, locationId);
 	case CodeFocusHandler::Direction::LEFT:
 		return moveFocusInLine(lineNumber, locationId, false);
 	case CodeFocusHandler::Direction::RIGHT:
@@ -590,7 +590,7 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	return false;
 }
 
-bool QtCodeArea::moveFocusToLine(size_t lineNumber)
+bool QtCodeArea::moveFocusToLine(size_t lineNumber, Id previousLocationId)
 {
 	if (lineNumber >= getStartLineNumber() && lineNumber <= getEndLineNumber())
 	{
@@ -599,7 +599,26 @@ bool QtCodeArea::moveFocusToLine(size_t lineNumber)
 		std::vector<const Annotation*> annotations = getInteractiveAnnotationsForLineNumber(lineNumber);
 		if (annotations.size())
 		{
-			locationId = annotations.front()->locationId;
+			if (previousLocationId)
+			{
+				const Annotation* previousAnnotation = getAnnotationForLocationId(previousLocationId);
+				if (previousAnnotation)
+				{
+					int dist = -1;
+					for (const Annotation* a : annotations)
+					{
+						if (dist < 0 || std::abs(a->startCol - previousAnnotation->startCol) < dist)
+						{
+							dist = std::abs(a->startCol - previousAnnotation->startCol);
+							locationId = a->locationId;
+						}
+					}
+				}
+			}
+			else
+			{
+				locationId = annotations.front()->locationId;
+			}
 		}
 
 		m_linesToRehighlight.push_back(lineNumber);

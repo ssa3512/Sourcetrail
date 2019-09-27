@@ -704,6 +704,19 @@ void QtCodeField::setTextColorForAnnotation(const Annotation& annotation, QColor
 	m_highlighter->applyFormat(annotation.start, annotation.end, format);
 }
 
+const QtCodeField::Annotation* QtCodeField::getAnnotationForLocationId(Id locationId) const
+{
+	for (const Annotation& annotation : m_annotations)
+	{
+		if (annotation.locationId == locationId)
+		{
+			return &annotation;
+		}
+	}
+
+	return nullptr;
+}
+
 std::vector<const QtCodeField::Annotation*> QtCodeField::getInteractiveAnnotationsForLineNumber(size_t lineNumber) const
 {
 	std::vector<const QtCodeField::Annotation*> annotations;

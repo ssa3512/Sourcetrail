@@ -106,6 +106,7 @@ protected:
 	const AnnotationColor& getAnnotationColorForAnnotation(const Annotation& annotation);
 	void setTextColorForAnnotation(const Annotation& annotation, QColor color) const;
 
+	const Annotation* getAnnotationForLocationId(Id locationId) const;
 	std::vector<const Annotation*> getInteractiveAnnotationsForLineNumber(size_t lineNumber) const;
 	std::vector<const Annotation*> getInteractiveAnnotationsForPosition(QPoint position) const;
 	std::vector<Id> getInteractiveTokenIdsForPosition(QPoint position) const;
