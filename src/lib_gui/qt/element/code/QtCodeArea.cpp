@@ -582,9 +582,9 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	switch (direction)
 	{
 	case CodeFocusHandler::Direction::UP:
-		return moveFocusToLine(lineNumber, locationId, true);
+		return moveFocusToLine(lineNumber, m_navigator->getTargetColumn(), true);
 	case CodeFocusHandler::Direction::DOWN:
-		return moveFocusToLine(lineNumber, locationId, false);
+		return moveFocusToLine(lineNumber, m_navigator->getTargetColumn(), false);
 	case CodeFocusHandler::Direction::LEFT:
 		return moveFocusInLine(lineNumber, locationId, false);
 	case CodeFocusHandler::Direction::RIGHT:
@@ -594,7 +594,7 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	return false;
 }
 
-bool QtCodeArea::moveFocusToLine(size_t lineNumber, Id previousLocationId, bool up)
+bool QtCodeArea::moveFocusToLine(size_t lineNumber, int targetColumn, bool up)
 {
 	while (true)
 	{
@@ -619,29 +619,19 @@ bool QtCodeArea::moveFocusToLine(size_t lineNumber, Id previousLocationId, bool 
 		}
 
 		Id locationId = 0;
-		if (previousLocationId)
+
+		int dist = -1;
+		for (const Annotation* a : annotations)
 		{
-			const Annotation* previousAnnotation = getAnnotationForLocationId(previousLocationId);
-			if (previousAnnotation)
+			if (dist < 0 || std::abs(a->startCol - targetColumn) < dist)
 			{
-				int dist = -1;
-				for (const Annotation* a : annotations)
-				{
-					if (dist < 0 || std::abs(a->startCol - previousAnnotation->startCol) < dist)
-					{
-						dist = std::abs(a->startCol - previousAnnotation->startCol);
-						locationId = a->locationId;
-					}
-				}
+				dist = std::abs(a->startCol - targetColumn);
+				locationId = a->locationId;
 			}
-		}
-		else
-		{
-			locationId = annotations.front()->locationId;
 		}
 
 		m_linesToRehighlight.push_back(lineNumber);
-		m_navigator->setFocusedLocationId(this, lineNumber, locationId);
+		m_navigator->setFocusedLocationId(this, lineNumber, 0, locationId);
 
 		return true;
 	}
@@ -683,7 +673,7 @@ bool QtCodeArea::moveFocusInLine(size_t lineNumber, Id locationId, bool forward)
 	if (target && target->locationId != locationId)
 	{
 		m_linesToRehighlight.push_back(lineNumber);
-		m_navigator->setFocusedLocationId(this, lineNumber, target->locationId);
+		m_navigator->setFocusedLocationId(this, lineNumber, target->startCol, target->locationId);
 		return true;
 	}
 
@@ -838,7 +828,8 @@ void QtCodeArea::mouseMoveEvent(QMouseEvent* event)
 
 		if (annotations.size())
 		{
-			m_navigator->setFocusedLocationId(this, annotations.front()->startLine, annotations.front()->locationId);
+			const Annotation* focus = annotations.front();
+			m_navigator->setFocusedLocationId(this, focus->startLine, focus->startCol, focus->locationId);
 		}
 	}
 }
