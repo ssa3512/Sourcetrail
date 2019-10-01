@@ -293,6 +293,19 @@ void QtCodeFile::findScreenMatches(const std::wstring& query, std::vector<std::p
 	}
 }
 
+bool QtCodeFile::hasFocus(const CodeFocusHandler::Focus& focus) const
+{
+	for (QtCodeSnippet* snippet : m_snippets)
+	{
+		if (snippet->hasFocus(focus))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
 	for (size_t i = 0; i < m_snippets.size(); i++)
@@ -320,6 +333,22 @@ bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandle
 	}
 
 	return false;
+}
+
+void QtCodeFile::focusTop()
+{
+	if (m_snippets.size())
+	{
+		m_snippets.front()->focusTop();
+	}
+}
+
+void QtCodeFile::focusBottom()
+{
+	if (m_snippets.size())
+	{
+		m_snippets.back()->focusBottom();
+	}
 }
 
 void QtCodeFile::clickedMinimizeButton()
