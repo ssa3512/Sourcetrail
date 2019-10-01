@@ -166,6 +166,11 @@ void QtCodeFileTitleBar::updateRefCount(int refCount, bool hasErrors, size_t fat
 	}
 }
 
+bool QtCodeFileTitleBar::isCollapsed() const
+{
+	return m_expandButton->isVisible();
+}
+
 void QtCodeFileTitleBar::setIsFocused(bool focused)
 {
 	setProperty("focused", focused);

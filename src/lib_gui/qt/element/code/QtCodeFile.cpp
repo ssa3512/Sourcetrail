@@ -187,18 +187,6 @@ void QtCodeFile::requestWholeFileContent(size_t targetLineNumber)
 	}
 }
 
-void QtCodeFile::toggleCollapsed()
-{
-	if (!m_snippets.size() || !m_snippets.front()->isVisible())
-	{
-		clickedSnippetButton();
-	}
-	else
-	{
-		clickedMinimizeButton();
-	}
-}
-
 void QtCodeFile::updateContent()
 {
 	updateSnippets();
@@ -226,6 +214,23 @@ void QtCodeFile::setIsComplete(bool isComplete)
 void QtCodeFile::setIsIndexed(bool isIndexed)
 {
 	m_titleBar->setIsIndexed(isIndexed);
+}
+
+bool QtCodeFile::isCollapsed() const
+{
+	return m_titleBar->isCollapsed();
+}
+
+void QtCodeFile::toggleCollapsed()
+{
+	if (isCollapsed())
+	{
+		clickedSnippetButton();
+	}
+	else
+	{
+		clickedMinimizeButton();
+	}
 }
 
 void QtCodeFile::setMinimized()
@@ -364,12 +369,6 @@ bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandle
 		}
 	}
 
-	if (direction == CodeFocusHandler::Direction::LEFT && hasFocus(focus))
-	{
-		m_navigator->setFocusedFile(this);
-		return true;
-	}
-
 	return false;
 }
 
@@ -408,7 +407,12 @@ void QtCodeFile::clickedSnippetButton()
 		m_filePath,
 		MessageChangeFileView::FILE_SNIPPETS,
 		MessageChangeFileView::VIEW_LIST,
+<<<<<<< HEAD
 		CodeScrollParams::toFile(m_filePath, CodeScrollParams::Target::VISIBLE)
+=======
+		!hasLoadedContent(),
+		m_navigator->hasErrors()
+>>>>>>> collapse and expand files
 	);
 	msg.setSchedulerId(m_navigator->getSchedulerId());
 	msg.dispatch();

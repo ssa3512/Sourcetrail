@@ -661,7 +661,7 @@ bool QtCodeArea::moveFocusInLine(size_t lineNumber, Id locationId, bool forward)
 		}
 	}
 
-	if (target)
+	if (target && target->locationId != locationId)
 	{
 		m_linesToRehighlight.push_back(lineNumber);
 		m_navigator->setFocusedLocationId(this, lineNumber, target->locationId);

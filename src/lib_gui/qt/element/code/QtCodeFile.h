@@ -45,15 +45,15 @@ public:
 
 	std::pair<QtCodeSnippet*, Id> getFirstSnippetWithActiveLocationId(Id tokenId) const;
 
-	void requestWholeFileContent(size_t targetLineNumber);
-
-	void toggleCollapsed();
-
+	void requestWholeFileContent();
 	void updateContent();
 
 	void setWholeFile(bool isWholeFile, int refCount);
 	void setIsComplete(bool isComplete);
 	void setIsIndexed(bool isIndexed);
+
+	bool isCollapsed() const;
+	void toggleCollapsed();
 
 	void setMinimized();
 	void setSnippets();
