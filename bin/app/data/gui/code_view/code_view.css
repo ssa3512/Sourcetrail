@@ -218,6 +218,10 @@
 	text-align: left;
 }
 
+#code_file #code_snippet #scope_name[focused=true] {
+	background: "red";
+}
+
 #line_number_area {
 	background-color: <color:code/snippet/line_number/background>;
 	border: none;

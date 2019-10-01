@@ -9,6 +9,7 @@
 
 #include "QtCodeArea.h"
 
+#include "CodeFocusHandler.h"
 #include "CodeSnippetParams.h"
 
 class QBoxLayout;
@@ -50,6 +51,8 @@ public:
 	std::string getCode() const;
 
 	void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches);
+
+	bool moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction);
 
 	void ensureLocationIdVisible(Id locationId, bool animated);
 

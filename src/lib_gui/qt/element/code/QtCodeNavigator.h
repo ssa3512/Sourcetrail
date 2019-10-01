@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "CodeFocusHandler.h"
 #include "ErrorInfo.h"
 #include "LocationType.h"
 #include "QtCodeFileList.h"
@@ -75,7 +76,9 @@ public:
 
 	Id getFocusedLocationId() const;
 	size_t getFocusedLineNumber(QtCodeArea* area) const;
+	const CodeFocusHandler::Focus& getFocus() const;
 	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
+	void setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine);
 
 	std::wstring getErrorMessageForId(Id errorId) const;
 	void setErrorInfos(const std::vector<ErrorInfo>& errorInfos);
@@ -142,9 +145,7 @@ private:
 	std::set<Id> m_activeLocalTokenIds;
 	std::set<Id> m_coFocusedTokenIds;
 
-	QtCodeArea* m_focusedCodeArea = nullptr;
-	size_t m_focusedLineNumber = 0;
-	Id m_focusedLocationId = 0;
+	CodeFocusHandler::Focus m_focus;
 
 	std::map<Id, ErrorInfo> m_errorInfos;
 

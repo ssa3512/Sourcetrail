@@ -343,23 +343,31 @@ void QtCodeNavigator::setCoFocusedTokenIds(const std::vector<Id>& coFocusedToken
 
 Id QtCodeNavigator::getFocusedLocationId() const
 {
-	return m_focusedLocationId;
+	return m_focus.locationId;
 }
 
 size_t QtCodeNavigator::getFocusedLineNumber(QtCodeArea* area) const
 {
-	if (m_focusedCodeArea == area)
+	if (m_focus.area == area)
 	{
-		return m_focusedLineNumber;
+		return m_focus.lineNumber;
 	}
 	return 0;
 }
 
+const CodeFocusHandler::Focus& QtCodeNavigator::getFocus() const
+{
+	return m_focus;
+}
+
 void QtCodeNavigator::setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId)
 {
-	m_focusedCodeArea = area;
-	m_focusedLineNumber = lineNumber;
-	m_focusedLocationId = locationId;
+	m_focus = { area, nullptr, lineNumber, locationId };
+}
+
+void QtCodeNavigator::setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine)
+{
+	m_focus = { area, scopeLine, 0, 0 };
 }
 
 std::wstring QtCodeNavigator::getErrorMessageForId(Id errorId) const
@@ -599,7 +607,7 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_K:
 		case Qt::Key_W:
 			std::cout << "up" << std::endl;
-			m_current->moveFocus(CodeFocusHandler::Direction::UP, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			m_current->moveFocus(m_focus, CodeFocusHandler::Direction::UP);
 			updateFiles();
 			break;
 
@@ -607,7 +615,7 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_J:
 		case Qt::Key_S:
 			std::cout << "down" << std::endl;
-			m_current->moveFocus(CodeFocusHandler::Direction::DOWN, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			m_current->moveFocus(m_focus, CodeFocusHandler::Direction::DOWN);
 			updateFiles();
 			break;
 
@@ -615,7 +623,7 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_H:
 		case Qt::Key_A:
 			std::cout << "left" << std::endl;
-			m_current->moveFocus(CodeFocusHandler::Direction::LEFT, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			m_current->moveFocus(m_focus, CodeFocusHandler::Direction::LEFT);
 			updateFiles();
 			break;
 
@@ -623,16 +631,20 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 		case Qt::Key_L:
 		case Qt::Key_D:
 			std::cout << "right" << std::endl;
-			m_current->moveFocus(CodeFocusHandler::Direction::RIGHT, m_focusedCodeArea, m_focusedLineNumber, m_focusedLocationId);
+			m_current->moveFocus(m_focus, CodeFocusHandler::Direction::RIGHT);
 			updateFiles();
 			break;
 
 		case Qt::Key_E:
 		case Qt::Key_Return:
 			std::cout << "activate" << std::endl;
-			if (m_focusedCodeArea && m_focusedLocationId)
+			if (m_focus.area && m_focus.locationId)
 			{
-				m_focusedCodeArea->activateLocationId(m_focusedLocationId);
+				m_focus.area->activateLocationId(m_focus.locationId);
+			}
+			else if (m_focus.scopeLine)
+			{
+				m_focus.scopeLine->clicked();
 			}
 			break;
 

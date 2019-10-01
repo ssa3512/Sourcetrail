@@ -32,7 +32,7 @@ public:
 
 	virtual void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches) = 0;
 
-	virtual void moveFocus(CodeFocusHandler::Direction direction, QtCodeArea* area, size_t lineNumber, Id locationId) = 0;
+	virtual void moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction) = 0;
 
 protected:
 	void ensureWidgetVisibleAnimated(

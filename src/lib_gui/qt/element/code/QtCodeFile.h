@@ -10,6 +10,7 @@
 
 #include "FilePath.h"
 
+#include "CodeFocusHandler.h"
 #include "CodeSnippetParams.h"
 
 class QtCodeArea;
@@ -60,6 +61,8 @@ public:
 	void updateTitleBar();
 
 	void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches);
+
+	bool moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction);
 
 public slots:
 	void clickedMinimizeButton();
