@@ -74,8 +74,6 @@ public:
 	const std::set<Id>& getCoFocusedTokenIds() const;
 	void setCoFocusedTokenIds(const std::vector<Id>& coFocusedTokenIds);
 
-	Id getFocusedLocationId() const;
-	size_t getFocusedLineNumber(QtCodeArea* area) const;
 	const CodeFocusHandler::Focus& getFocus() const;
 	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
 	void setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine);

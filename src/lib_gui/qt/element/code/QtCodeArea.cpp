@@ -240,7 +240,11 @@ void QtCodeArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 		drawAreaBottom = height() - horizontalScrollBar()->height();
 	}
 
-	size_t focusedLineNumber = m_navigator->getFocusedLineNumber(this);
+	size_t focusedLineNumber = 0;
+	if (m_navigator->getFocus().area == this)
+	{
+		focusedLineNumber = m_navigator->getFocus().lineNumber;
+	}
 
 	while (block.isValid() && top <= drawAreaBottom)
 	{
@@ -960,7 +964,7 @@ void QtCodeArea::annotateText()
 	utility::append(coFocusedSymbolIds, m_navigator->getCoFocusedTokenIds());
 
 	bool needsUpdate = QtCodeField::annotateText(
-		activeSymbolIds, activeLocationIds, coFocusedSymbolIds, m_navigator->getFocusedLocationId());
+		activeSymbolIds, activeLocationIds, coFocusedSymbolIds, m_navigator->getFocus().locationId);
 	if (needsUpdate)
 	{
 		m_lineNumberArea->update();

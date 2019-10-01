@@ -341,20 +341,6 @@ void QtCodeNavigator::setCoFocusedTokenIds(const std::vector<Id>& coFocusedToken
 	m_coFocusedTokenIds = std::set<Id>(coFocusedTokenIds.begin(), coFocusedTokenIds.end());
 }
 
-Id QtCodeNavigator::getFocusedLocationId() const
-{
-	return m_focus.locationId;
-}
-
-size_t QtCodeNavigator::getFocusedLineNumber(QtCodeArea* area) const
-{
-	if (m_focus.area == area)
-	{
-		return m_focus.lineNumber;
-	}
-	return 0;
-}
-
 const CodeFocusHandler::Focus& QtCodeNavigator::getFocus() const
 {
 	return m_focus;
