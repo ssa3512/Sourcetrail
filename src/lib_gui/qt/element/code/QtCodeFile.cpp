@@ -295,11 +295,27 @@ void QtCodeFile::findScreenMatches(const std::wstring& query, std::vector<std::p
 
 bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
-	for (QtCodeSnippet* snippet : m_snippets)
+	for (size_t i = 0; i < m_snippets.size(); i++)
 	{
+		QtCodeSnippet* snippet = m_snippets[i];
+
 		if (snippet->moveFocus(focus, direction))
 		{
 			return true;
+		}
+		else if (snippet->hasFocus(focus))
+		{
+			if (direction == CodeFocusHandler::Direction::UP && i > 0)
+			{
+				m_snippets[i - 1]->focusBottom();
+				return true;
+			}
+			else if (direction == CodeFocusHandler::Direction::DOWN && i < m_snippets.size() - 1)
+			{
+				m_snippets[i + 1]->focusTop();
+				return true;
+			}
+			return false;
 		}
 	}
 

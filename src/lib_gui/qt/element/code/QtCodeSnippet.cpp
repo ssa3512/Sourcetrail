@@ -172,6 +172,11 @@ void QtCodeSnippet::findScreenMatches(const std::wstring& query, std::vector<std
 	m_codeArea->findScreenMatches(query, screenMatches);
 }
 
+bool QtCodeSnippet::hasFocus(const CodeFocusHandler::Focus& focus) const
+{
+	return m_codeArea == focus.area;
+}
+
 bool QtCodeSnippet::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
 	if (m_codeArea == focus.area)
@@ -203,9 +208,34 @@ bool QtCodeSnippet::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHan
 					return true;
 				}
 			}
+			return moved;
 		}
 	}
 	return false;
+}
+
+void QtCodeSnippet::focusTop()
+{
+	if (m_title)
+	{
+		m_navigator->setFocusedScopeLine(m_codeArea, m_title);
+	}
+	else
+	{
+		m_codeArea->moveFocus(CodeFocusHandler::Direction::DOWN, m_codeArea->getStartLineNumber() - 1, 0);
+	}
+}
+
+void QtCodeSnippet::focusBottom()
+{
+	if (m_footer)
+	{
+		m_navigator->setFocusedScopeLine(m_codeArea, m_footer);
+	}
+	else
+	{
+		m_codeArea->moveFocus(CodeFocusHandler::Direction::UP, m_codeArea->getEndLineNumber() + 1, 0);
+	}
 }
 
 void QtCodeSnippet::ensureLocationIdVisible(Id locationId, bool animated)
