@@ -582,9 +582,9 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	switch (direction)
 	{
 	case CodeFocusHandler::Direction::UP:
-		return moveFocusToLine(lineNumber - 1, locationId);
+		return moveFocusToLine(lineNumber, locationId, true);
 	case CodeFocusHandler::Direction::DOWN:
-		return moveFocusToLine(lineNumber + 1, locationId);
+		return moveFocusToLine(lineNumber, locationId, false);
 	case CodeFocusHandler::Direction::LEFT:
 		return moveFocusInLine(lineNumber, locationId, false);
 	case CodeFocusHandler::Direction::RIGHT:
@@ -594,35 +594,50 @@ bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNum
 	return false;
 }
 
-bool QtCodeArea::moveFocusToLine(size_t lineNumber, Id previousLocationId)
+bool QtCodeArea::moveFocusToLine(size_t lineNumber, Id previousLocationId, bool up)
 {
-	if (lineNumber >= getStartLineNumber() && lineNumber <= getEndLineNumber())
+	while (true)
 	{
-		Id locationId = 0;
+		if (up)
+		{
+			lineNumber--;
+		}
+		else
+		{
+			lineNumber++;
+		}
+
+		if (lineNumber < getStartLineNumber() || lineNumber > getEndLineNumber())
+		{
+			break;
+		}
 
 		std::vector<const Annotation*> annotations = getInteractiveAnnotationsForLineNumber(lineNumber);
-		if (annotations.size())
+		if (!annotations.size())
 		{
-			if (previousLocationId)
+			continue;
+		}
+
+		Id locationId = 0;
+		if (previousLocationId)
+		{
+			const Annotation* previousAnnotation = getAnnotationForLocationId(previousLocationId);
+			if (previousAnnotation)
 			{
-				const Annotation* previousAnnotation = getAnnotationForLocationId(previousLocationId);
-				if (previousAnnotation)
+				int dist = -1;
+				for (const Annotation* a : annotations)
 				{
-					int dist = -1;
-					for (const Annotation* a : annotations)
+					if (dist < 0 || std::abs(a->startCol - previousAnnotation->startCol) < dist)
 					{
-						if (dist < 0 || std::abs(a->startCol - previousAnnotation->startCol) < dist)
-						{
-							dist = std::abs(a->startCol - previousAnnotation->startCol);
-							locationId = a->locationId;
-						}
+						dist = std::abs(a->startCol - previousAnnotation->startCol);
+						locationId = a->locationId;
 					}
 				}
 			}
-			else
-			{
-				locationId = annotations.front()->locationId;
-			}
+		}
+		else
+		{
+			locationId = annotations.front()->locationId;
 		}
 
 		m_linesToRehighlight.push_back(lineNumber);
