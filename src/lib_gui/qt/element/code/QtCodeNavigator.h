@@ -22,6 +22,7 @@ class SourceLocationFile;
 
 class QtCodeNavigator
 	: public QWidget
+	, public CodeFocusHandler
 	, public MessageListener<MessageIndexingFinished>
 	, public MessageListener<MessageSwitchColorScheme>
 	, public MessageListener<MessageWindowFocus>
@@ -73,11 +74,6 @@ public:
 
 	const std::set<Id>& getCoFocusedTokenIds() const;
 	void setCoFocusedTokenIds(const std::vector<Id>& coFocusedTokenIds);
-
-	const CodeFocusHandler::Focus& getFocus() const;
-	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
-	void setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine);
-	void setFocusedFile(QtCodeFile* file);
 
 	std::wstring getErrorMessageForId(Id errorId) const;
 	void setErrorInfos(const std::vector<ErrorInfo>& errorInfos);
@@ -143,8 +139,6 @@ private:
 	std::set<Id> m_activeTokenIds;
 	std::set<Id> m_activeLocalTokenIds;
 	std::set<Id> m_coFocusedTokenIds;
-
-	CodeFocusHandler::Focus m_focus;
 
 	std::map<Id, ErrorInfo> m_errorInfos;
 

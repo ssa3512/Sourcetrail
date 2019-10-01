@@ -26,6 +26,15 @@ public:
 		size_t lineNumber = 0;
 		Id locationId = 0;
 	};
+
+	const Focus& getFocus() const;
+
+	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
+	void setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine);
+	void setFocusedFile(QtCodeFile* file);
+
+protected:
+	Focus m_focus;
 };
 
 #endif // CODE_FOCUS_HANDLER_H

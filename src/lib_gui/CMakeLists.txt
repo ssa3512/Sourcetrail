@@ -21,6 +21,7 @@ add_files(
 	qt/element/button/QtSelfRefreshIconButton.cpp
 	qt/element/button/QtSelfRefreshIconButton.h
 
+	qt/element/code/CodeFocusHandler.cpp
 	qt/element/code/CodeFocusHandler.h
 	qt/element/code/QtCodeArea.cpp
 	qt/element/code/QtCodeArea.h
