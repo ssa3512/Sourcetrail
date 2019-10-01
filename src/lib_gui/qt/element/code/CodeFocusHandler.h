@@ -5,6 +5,7 @@
 
 class QPushButton;
 class QtCodeArea;
+class QtCodeFile;
 
 class CodeFocusHandler
 {
@@ -19,6 +20,7 @@ public:
 
 	struct Focus
 	{
+		QtCodeFile* file = nullptr;
 		QtCodeArea* area = nullptr;
 		QPushButton* scopeLine = nullptr;
 		size_t lineNumber = 0;

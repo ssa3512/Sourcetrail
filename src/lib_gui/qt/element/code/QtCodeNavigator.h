@@ -79,6 +79,7 @@ public:
 	const CodeFocusHandler::Focus& getFocus() const;
 	void setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId);
 	void setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine);
+	void setFocusedFile(QtCodeFile* file);
 
 	std::wstring getErrorMessageForId(Id errorId) const;
 	void setErrorInfos(const std::vector<ErrorInfo>& errorInfos);

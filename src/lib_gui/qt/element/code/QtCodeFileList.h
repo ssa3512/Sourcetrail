@@ -39,7 +39,7 @@ public:
 
 	void addFile(const CodeFileParams& params);
 
-	// QtCodeNaviatebale implementation
+	// QtCodeNavigatebale implementation
 	QScrollArea* getScrollArea() override;
 
 	void updateSourceLocations(const CodeSnippetParams& params) override;

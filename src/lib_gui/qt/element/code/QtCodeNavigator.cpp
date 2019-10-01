@@ -362,12 +362,17 @@ const CodeFocusHandler::Focus& QtCodeNavigator::getFocus() const
 
 void QtCodeNavigator::setFocusedLocationId(QtCodeArea* area, size_t lineNumber, Id locationId)
 {
-	m_focus = { area, nullptr, lineNumber, locationId };
+	m_focus = { nullptr, area, nullptr, lineNumber, locationId };
 }
 
 void QtCodeNavigator::setFocusedScopeLine(QtCodeArea* area, QPushButton* scopeLine)
 {
-	m_focus = { area, scopeLine, 0, 0 };
+	m_focus = { nullptr, area, scopeLine, 0, 0 };
+}
+
+void QtCodeNavigator::setFocusedFile(QtCodeFile* file)
+{
+	m_focus = { file, nullptr, nullptr, 0, 0 };
 }
 
 std::wstring QtCodeNavigator::getErrorMessageForId(Id errorId) const
@@ -645,6 +650,10 @@ void QtCodeNavigator::keyPressEvent(QKeyEvent* event)
 			else if (m_focus.scopeLine)
 			{
 				m_focus.scopeLine->clicked();
+			}
+			else if (m_focus.file)
+			{
+				m_focus.file->toggleCollapsed();
 			}
 			break;
 

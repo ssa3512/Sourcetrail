@@ -187,6 +187,18 @@ void QtCodeFile::requestWholeFileContent(size_t targetLineNumber)
 	}
 }
 
+void QtCodeFile::toggleCollapsed()
+{
+	if (!m_snippets.size() || !m_snippets.front()->isVisible())
+	{
+		clickedSnippetButton();
+	}
+	else
+	{
+		clickedMinimizeButton();
+	}
+}
+
 void QtCodeFile::updateContent()
 {
 	updateSnippets();
@@ -195,6 +207,8 @@ void QtCodeFile::updateContent()
 	{
 		snippet->updateContent();
 	}
+
+	m_titleBar->setIsFocused(m_navigator->getFocus().file == this);
 }
 
 void QtCodeFile::setWholeFile(bool isWholeFile, int refCount)
@@ -295,6 +309,11 @@ void QtCodeFile::findScreenMatches(const std::wstring& query, std::vector<std::p
 
 bool QtCodeFile::hasFocus(const CodeFocusHandler::Focus& focus) const
 {
+	if (focus.file == this)
+	{
+		return true;
+	}
+
 	for (QtCodeSnippet* snippet : m_snippets)
 	{
 		if (snippet->hasFocus(focus))
@@ -308,6 +327,12 @@ bool QtCodeFile::hasFocus(const CodeFocusHandler::Focus& focus) const
 
 bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
+	if (direction == CodeFocusHandler::Direction::DOWN && focus.file == this && !isCollapsed() && m_snippets.size())
+	{
+		m_snippets[0]->focusTop();
+		return true;
+	}
+
 	for (size_t i = 0; i < m_snippets.size(); i++)
 	{
 		QtCodeSnippet* snippet = m_snippets[i];
@@ -318,18 +343,31 @@ bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandle
 		}
 		else if (snippet->hasFocus(focus))
 		{
-			if (direction == CodeFocusHandler::Direction::UP && i > 0)
+			if (direction == CodeFocusHandler::Direction::UP)
 			{
-				m_snippets[i - 1]->focusBottom();
+				if (i > 0)
+				{
+					m_snippets[i - 1]->focusBottom();
+				}
+				else
+				{
+					m_navigator->setFocusedFile(this);
+				}
 				return true;
 			}
-			else if (direction == CodeFocusHandler::Direction::DOWN && i < m_snippets.size() - 1)
+			else if (direction == CodeFocusHandler::Direction::DOWN && !isCollapsed() && i < m_snippets.size() - 1)
 			{
 				m_snippets[i + 1]->focusTop();
 				return true;
 			}
-			return false;
+			break;
 		}
+	}
+
+	if (direction == CodeFocusHandler::Direction::LEFT && hasFocus(focus))
+	{
+		m_navigator->setFocusedFile(this);
+		return true;
 	}
 
 	return false;
@@ -337,17 +375,18 @@ bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandle
 
 void QtCodeFile::focusTop()
 {
-	if (m_snippets.size())
-	{
-		m_snippets.front()->focusTop();
-	}
+	m_navigator->setFocusedFile(this);
 }
 
 void QtCodeFile::focusBottom()
 {
-	if (m_snippets.size())
+	if (!isCollapsed() && m_snippets.size())
 	{
 		m_snippets.back()->focusBottom();
+	}
+	else
+	{
+		m_navigator->setFocusedFile(this);
 	}
 }
 

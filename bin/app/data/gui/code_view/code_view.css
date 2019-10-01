@@ -139,6 +139,10 @@
 	border-top: 1px solid <color:code/navigation/line>;
 }
 
+#title_bar[focused=true] {
+	background: "red";
+}
+
 #title_bar_single {
 	background-color: <color:code/file/background>;
 	padding-right: 5px;
