@@ -288,6 +288,17 @@ void QtCodeFileList::findScreenMatches(const std::wstring& query, std::vector<st
 	}
 }
 
+void QtCodeFileList::setFocus(Id locationId)
+{
+	for (QtCodeFile* file : m_files)
+	{
+		if (file->setFocus(locationId))
+		{
+			return;
+		}
+	}
+}
+
 void QtCodeFileList::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
 	for (size_t i = 0; i < m_files.size(); i++)

@@ -91,6 +91,7 @@ public:
 
 	void ensureLocationIdVisible(Id locationId, int parentWidth, bool animated);
 
+	bool setFocus(Id locationId);
 	bool moveFocus(CodeFocusHandler::Direction direction, size_t lineNumber, Id locationId);
 	bool moveFocusToLine(size_t lineNumber, int targetColumn, bool up);
 	bool moveFocusInLine(size_t lineNumber, Id locationId, bool forward);

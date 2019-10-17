@@ -577,6 +577,24 @@ void QtCodeArea::ensureLocationIdVisible(Id locationId, int parentWidth, bool an
 	}
 }
 
+bool QtCodeArea::setFocus(Id locationId)
+{
+	for (const Annotation& annotation : m_annotations)
+	{
+		const LocationType& type = annotation.locationType;
+		if (annotation.locationId == locationId &&
+			(type == LOCATION_TOKEN || type == LOCATION_QUALIFIER || type == LOCATION_LOCAL_SYMBOL
+			|| type == LOCATION_UNSOLVED || type == LOCATION_ERROR))
+		{
+			m_linesToRehighlight.push_back(annotation.startLine);
+			m_navigator->setFocusedLocationId(this, annotation.startLine, annotation.startCol, locationId);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool QtCodeArea::moveFocus(CodeFocusHandler::Direction direction, size_t lineNumber, Id locationId)
 {
 	switch (direction)

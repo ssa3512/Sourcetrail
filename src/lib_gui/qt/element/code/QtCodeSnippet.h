@@ -53,6 +53,7 @@ public:
 	void findScreenMatches(const std::wstring& query, std::vector<std::pair<QtCodeArea*, Id>>* screenMatches);
 
 	bool hasFocus(const CodeFocusHandler::Focus& focus) const;
+	bool setFocus(Id locationId);
 	bool moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction);
 	void focusTop();
 	void focusBottom();

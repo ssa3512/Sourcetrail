@@ -177,6 +177,11 @@ bool QtCodeSnippet::hasFocus(const CodeFocusHandler::Focus& focus) const
 	return m_codeArea == focus.area;
 }
 
+bool QtCodeSnippet::setFocus(Id locationId)
+{
+	return m_codeArea->setFocus(locationId);
+}
+
 bool QtCodeSnippet::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
 	if (m_codeArea == focus.area)

@@ -330,6 +330,19 @@ bool QtCodeFile::hasFocus(const CodeFocusHandler::Focus& focus) const
 	return false;
 }
 
+bool QtCodeFile::setFocus(Id locationId)
+{
+	for (QtCodeSnippet* snippet : m_snippets)
+	{
+		if (snippet->setFocus(locationId))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool QtCodeFile::moveFocus(const CodeFocusHandler::Focus& focus, CodeFocusHandler::Direction direction)
 {
 	if (direction == CodeFocusHandler::Direction::DOWN && focus.file == this && !isCollapsed() && m_snippets.size())
