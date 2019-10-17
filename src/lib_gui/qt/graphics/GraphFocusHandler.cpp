@@ -225,7 +225,7 @@ void GraphFocusHandler::expandFocus()
 {
 	if (m_focusNode)
 	{
-		m_focusNode->onCollapseExpand();
+		m_lastFocusId = m_focusNode->onCollapseExpand();
 	}
 	else if (m_focusEdge)
 	{
