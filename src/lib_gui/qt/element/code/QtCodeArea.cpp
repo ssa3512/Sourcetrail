@@ -703,14 +703,7 @@ void QtCodeArea::activateLocationId(Id locationId)
 	const Annotation* annotation = getAnnotationForLocationId(locationId);
 	if (annotation)
 	{
-		if (m_navigator->hasErrors())
-		{
-			activateErrors({ annotation });
-		}
-		else
-		{
-			activateAnnotations({ annotation });
-		}
+		activateAnnotationsOrErrors({ annotation });
 	}
 }
 

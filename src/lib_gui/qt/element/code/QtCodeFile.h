@@ -45,7 +45,7 @@ public:
 
 	std::pair<QtCodeSnippet*, Id> getFirstSnippetWithActiveLocationId(Id tokenId) const;
 
-	void requestWholeFileContent();
+	void requestWholeFileContent(size_t targetLineNumber);
 	void updateContent();
 
 	void setWholeFile(bool isWholeFile, int refCount);

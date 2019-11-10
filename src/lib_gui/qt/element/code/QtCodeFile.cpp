@@ -420,12 +420,7 @@ void QtCodeFile::clickedSnippetButton()
 		m_filePath,
 		MessageChangeFileView::FILE_SNIPPETS,
 		MessageChangeFileView::VIEW_LIST,
-<<<<<<< HEAD
 		CodeScrollParams::toFile(m_filePath, CodeScrollParams::Target::VISIBLE)
-=======
-		!hasLoadedContent(),
-		m_navigator->hasErrors()
->>>>>>> collapse and expand files
 	);
 	msg.setSchedulerId(m_navigator->getSchedulerId());
 	msg.dispatch();
